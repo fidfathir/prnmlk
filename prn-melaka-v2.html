@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>PRN Melaka 2026 — Dashboard Swing & Demografi</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f5f4f0;--bg2:#fff;--bg3:#f0efe9;--bg4:#e4e2d8;
+  --border:#d6d3c8;--border2:#b8b5a8;
+  --text:#111;--dim:#555;--faint:#999;
+  --BN:#b91c1c;--BN-l:#fff1f2;--BN-b:#fecdd3;
+  --PH:#1d4ed8;--PH-l:#eff6ff;--PH-b:#bfdbfe;
+  --PN:#15803d;--PN-l:#f0fdf4;--PN-b:#bbf7d0;
+  --purple:#7c3aed;--gold:#92400e;
+  --youth:#3b82f6;--youth-l:#eff6ff;--youth-b:#bfdbfe;
+  --mid:#f59e0b;--mid-l:#fefce8;--mid-b:#fde68a;
+  --senior:#ef4444;--senior-l:#fff1f2;--senior-b:#fecdd3;
+  --A18:#6366f1;--A21:#3b82f6;--A30:#06b6d4;--A40:#10b981;
+  --A50:#f59e0b;--A60:#f97316;--A70:#ef4444;--A80:#9f1239;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;line-height:1.55;}
+body{max-width:1080px;margin:0 auto;padding-bottom:80px;}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;background:var(--bg4);border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:pointer;}
+select{-webkit-appearance:none;appearance:none;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(245,244,240,.97);backdrop-filter:blur(8px);
+  border-bottom:2px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--BN);letter-spacing:3px;font-weight:700;}
+.nav-links{display:flex;gap:5px;flex-wrap:wrap;}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--dim);text-decoration:none;
+  padding:4px 8px;border-radius:4px;border:1px solid var(--border);transition:all .15s;}
+.nav-links a:hover{background:var(--bg3);}
+.nav-reset{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);
+  background:rgba(124,58,237,.07);border:1.5px solid rgba(124,58,237,.3);padding:5px 12px;
+  border-radius:5px;cursor:pointer;font-weight:700;transition:all .15s;}
+.nav-reset:hover{background:rgba(124,58,237,.14);}
+
+/* COVER */
+.cover{padding:36px 20px 28px;background:var(--bg2);border-bottom:2px solid var(--border);}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--BN);letter-spacing:3px;font-weight:700;margin-bottom:8px;}
+.cover-title{font-size:36px;font-weight:800;letter-spacing:-1.5px;line-height:1.05;margin-bottom:6px;}
+.cover-sub{font-size:15px;color:var(--dim);margin-bottom:20px;}
+
+/* SCOREBOARD */
+.scoreboard{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;margin-bottom:14px;}
+.sc-card{border-radius:12px;padding:14px 18px;border:2px solid;}
+.sc-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;font-weight:700;margin-bottom:4px;}
+.sc-num{font-family:'JetBrains Mono',monospace;font-size:36px;font-weight:800;line-height:1;}
+.sc-diff{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;margin-top:4px;}
+.sc-base{font-size:12px;color:var(--dim);margin-top:2px;}
+.sc-maj{border-radius:12px;padding:14px 18px;border:2px solid;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;min-width:120px;}
+.maj-icon{font-size:26px;margin-bottom:4px;}
+.maj-text{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;}
+.maj-sub{font-size:11px;color:var(--dim);margin-top:3px;}
+
+/* SEAT BAR */
+.bar-wrap{background:var(--bg2);border:2px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+.bar-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:2px;margin-bottom:10px;}
+.seat-bar{display:flex;height:24px;border-radius:6px;overflow:hidden;gap:1px;}
+.seat-seg{display:flex;align-items:center;justify-content:center;transition:flex .35s ease;min-width:2px;}
+.seat-seg span{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:#fff;}
+.maj-line-wrap{position:relative;height:14px;margin-top:2px;}
+.maj-line{position:absolute;width:2px;background:var(--purple);top:-3px;bottom:-3px;border-radius:1px;}
+.maj-lbl{position:absolute;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--purple);font-weight:700;top:3px;transform:translateX(-50%);white-space:nowrap;}
+.bar-legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;}
+.leg-dot{width:10px;height:10px;border-radius:50%;}
+
+/* CHANGES */
+.changes{background:var(--bg2);border:2px solid var(--purple);border-radius:12px;padding:14px 18px;margin-bottom:12px;display:none;}
+.changes.show{display:block;}
+.ch-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:2px;font-weight:700;margin-bottom:10px;}
+.ch-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);}
+.ch-row:last-child{border-bottom:none;}
+.ch-arrow{display:flex;align-items:center;gap:7px;}
+
+/* CONTROL PANELS */
+.ctrl-wrap{padding:20px 20px 0;}
+.ctrl-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;}
+.ctrl-tab{flex:1;padding:9px 4px;border:none;background:transparent;color:var(--faint);font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.5px;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;transition:all .15s;}
+.ctrl-tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.ctrl-panel{display:none;}
+.ctrl-panel.active{display:block;}
+
+/* GLOBAL SWING */
+.gs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.gs-item{}
+.gs-top{display:flex;justify-content:space-between;margin-bottom:5px;}
+.gs-key{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
+.gs-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
+.preset-row{display:flex;gap:6px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border);}
+.preset-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);align-self:center;}
+.preset-btn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 10px;border-radius:6px;border:1.5px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;font-weight:600;transition:all .15s;}
+.preset-btn:hover{border-color:var(--purple);color:var(--purple);}
+
+/* AGE SWING */
+.age-intro{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border:2px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--dim);line-height:1.6;}
+.age-intro strong{color:var(--text);}
+.age-swing-grid{display:grid;gap:12px;}
+.as-card{border-radius:12px;padding:16px;border:2px solid;}
+.as-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.as-title{font-size:15px;font-weight:800;}
+.as-stats{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);}
+.as-direction{display:flex;gap:6px;margin-bottom:12px;}
+.dir-btn{flex:1;padding:7px 4px;border-radius:7px;border:2px solid var(--border);background:var(--bg3);
+  font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .15s;}
+.dir-btn.active-BN{border-color:var(--BN);background:var(--BN-l);color:var(--BN);}
+.dir-btn.active-PH{border-color:var(--PH);background:var(--PH-l);color:var(--PH);}
+.dir-btn.active-PN{border-color:var(--PN);background:var(--PN-l);color:var(--PN);}
+.as-slider-row{display:flex;align-items:center;gap:10px;}
+.as-slider-label{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);}
+.as-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;min-width:48px;text-align:right;}
+.as-effect{font-size:12px;color:var(--dim);margin-top:8px;padding:6px 10px;background:rgba(255,255,255,.6);border-radius:6px;font-style:italic;}
+
+/* ISU PANEL */
+.isu-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;
+  background:var(--bg3);border-radius:8px;margin-bottom:10px;border:1.5px solid var(--border);}
+.isu-toggle-lbl{font-size:14px;font-weight:600;}
+.toggle-switch{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);border-radius:12px;transition:.3s;}
+.toggle-slider:before{content:'';position:absolute;height:18px;width:18px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+input:checked+.toggle-slider{background:var(--PN);}
+input:checked+.toggle-slider:before{transform:translateX(20px);}
+.isu-list-preview{display:grid;gap:5px;}
+.isu-prev-item{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 12px;border-radius:7px;border:1.5px solid var(--border);font-size:13px;}
+.isu-code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);margin-right:6px;}
+.isu-impact{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+
+/* DUN LIST */
+.dun-sec{padding:20px 20px 0;}
+.dun-sec-title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple);letter-spacing:3px;font-weight:700;
+  padding-bottom:10px;border-bottom:2px solid var(--border);margin-bottom:14px;}
+.region-hdr{background:var(--bg3);border:2px solid var(--border2);border-radius:10px;
+  padding:11px 16px;display:flex;align-items:center;gap:12px;margin-bottom:10px;margin-top:20px;}
+.rh-stripe{width:5px;height:32px;border-radius:3px;flex-shrink:0;}
+.rh-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;}
+.rh-count{font-size:12px;color:var(--dim);}
+.rh-seats{display:flex;gap:10px;margin-left:auto;}
+.rhs-item{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:800;}
+
+/* DUN CARD */
+.dun-card{background:var(--bg2);border:2px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;transition:border-color .2s;}
+.dun-card.flipped{border-color:var(--purple);}
+
+/* Card header */
+.dun-hdr{display:grid;grid-template-columns:1fr auto;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.dun-hdr:hover{background:var(--bg3);}
+.dh-left{}
+.dh-code{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);letter-spacing:1px;margin-bottom:2px;}
+.dh-name{font-size:18px;font-weight:800;letter-spacing:-.4px;}
+.dh-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px;align-items:center;}
+.badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
+.badge-flip{background:#ede9fe;color:var(--purple);}
+.badge-manual{background:#fef3c7;color:#92400e;}
+.badge-age{background:#dcfce7;color:#15803d;}
+.badge-status{border:1.5px solid;}
+.dh-right{text-align:right;}
+.dh-winner{color:#fff;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;padding:4px 13px;border-radius:6px;display:inline-block;}
+.dh-prev{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);text-decoration:line-through;display:block;margin-top:3px;}
+.dh-margin{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:5px;}
+
+/* Mini bar */
+.mini-bar{display:flex;height:5px;border-radius:3px;overflow:hidden;gap:1px;margin-top:8px;}
+.mini-seg{transition:flex .3s;min-width:1px;}
+
+/* Age mini strip */
+.age-strip{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:1px;margin-top:3px;}
+.age-seg{min-width:1px;}
+
+/* Mini stats */
+.dh-shares{display:flex;gap:10px;margin-top:5px;align-items:center;}
+.dh-share{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.age-pills{display:flex;gap:5px;margin-top:4px;}
+.age-pill{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;}
+
+/* Expanded body */
+.dun-body{display:none;}
+.dun-body.open{display:grid;grid-template-columns:1fr 1fr 1fr;}
+.body-col{padding:14px 16px;border-right:1px solid var(--border);}
+.body-col:last-child{border-right:none;}
+.body-col.age-col{background:linear-gradient(180deg,#f0fdf4 0%,var(--bg3) 100%);}
+.col-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--faint);font-weight:700;margin-bottom:11px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+
+/* Candidate row */
+.cand{margin-bottom:10px;}
+.cand-top{display:flex;justify-content:space-between;align-items:baseline;gap:6px;margin-bottom:3px;}
+.cand-name{font-size:13px;}
+.cand-name.w{font-weight:700;}
+.cand-name.l{color:var(--faint);font-weight:400;}
+.cand-tag{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;}
+.cand-pcts{display:flex;gap:10px;flex-shrink:0;}
+.p-old{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);}
+.p-new{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;}
+.cbar{height:5px;border-radius:3px;background:var(--bg4);margin-top:3px;}
+.cbar-f{height:100%;border-radius:3px;transition:width .3s;}
+
+/* Age breakdown in card */
+.age-breakdown{}
+.ab-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.ab-grp{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;min-width:52px;}
+.ab-bar{flex:1;height:14px;background:var(--bg4);border-radius:3px;overflow:hidden;}
+.ab-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 5px;}
+.ab-fill span{font-family:'JetBrains Mono',monospace;font-size:9px;color:#fff;font-weight:700;}
+.ab-num{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);min-width:46px;text-align:right;}
+.age-segs-card{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.asc{border-radius:7px;padding:8px;border:1.5px solid;text-align:center;}
+.asc-lbl{font-size:10px;font-weight:700;margin-bottom:2px;}
+.asc-num{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;}
+.asc-pct{font-family:'JetBrains Mono',monospace;font-size:11px;}
+.age-effect-note{font-size:11px;color:var(--dim);margin-top:8px;padding:6px 9px;background:rgba(255,255,255,.5);border-radius:5px;font-style:italic;line-height:1.5;}
+
+/* Swing slider col */
+.swing-note{font-size:12px;color:var(--dim);margin-bottom:10px;line-height:1.5;}
+.dun-slider-row{display:grid;grid-template-columns:26px 1fr 42px;align-items:center;gap:7px;margin-bottom:8px;}
+.dsl-key{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;}
+.dsl-val{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;text-align:right;}
+.btn-clear{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint);background:transparent;border:1px solid var(--border);padding:2px 6px;border-radius:3px;cursor:pointer;transition:all .15s;}
+.btn-clear:hover{color:#b91c1c;border-color:#b91c1c;}
+.swing-totals{background:var(--bg4);border-radius:6px;padding:8px 10px;margin-top:8px;}
+.st-title{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:1.5px;margin-bottom:5px;}
+.st-row{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;margin-bottom:2px;}
+
+/* Issues in card */
+.isu-item{border-left:3px solid;border-radius:0 5px 5px 0;padding:7px 9px;margin-bottom:7px;}
+.isu-item.pos{border-color:var(--PN);background:#f0fdf4;}
+.isu-item.neg{border-color:var(--BN);background:#fff1f2;}
+.isu-text{font-size:12px;font-weight:500;margin-bottom:4px;line-height:1.4;}
+.isu-tags{display:flex;gap:4px;flex-wrap:wrap;align-items:center;}
+.itag{font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;}
+.itag-cat{background:var(--bg4);color:var(--dim);}
+.itag-pos{background:#dcfce7;color:#15803d;}
+.itag-neg{background:#fee2e2;color:#b91c1c;}
+.itag-c{font-size:10px;font-weight:800;}
+.isu-sw{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;margin-left:auto;}
+
+/* Stats footer */
+.dun-stats{display:flex;border-top:1px solid var(--border);}
+.ds{flex:1;padding:9px 14px;border-right:1px solid var(--border);}
+.ds:last-child{border-right:none;}
+.ds-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:.5px;margin-bottom:2px;}
+.ds-val{font-size:14px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+
+/* Colors */
+.AGE_COL{} 
+footer{text-align:center;padding:24px;border-top:2px solid var(--border);margin-top:20px;}
+footer p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint);letter-spacing:.5px;line-height:1.8;}
+
+/* ── SEARCH + FILTER BAR ── */
+.sf-bar{padding:14px 20px;background:var(--bg2);border-bottom:2px solid var(--border);display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:52px;z-index:190;}
+.sf-input-wrap{position:relative;flex:1;min-width:180px;}
+.sf-input-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);pointer-events:none;}
+.sf-search{width:100%;padding:8px 10px 8px 34px;border:1.5px solid var(--border2);border-radius:8px;background:var(--bg3);font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);outline:none;}
+.sf-search:focus{border-color:var(--purple);background:var(--bg2);}
+.sf-filters{display:flex;gap:6px;flex-wrap:wrap;}
+.sf-pill{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg3);color:var(--dim);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sf-pill:hover{border-color:var(--purple);color:var(--purple);}
+.sf-pill.active{color:#fff;}
+.sf-pill[data-f="ALL"].active{background:var(--purple);border-color:var(--purple);}
+.sf-pill[data-f="BN"].active{background:var(--BN);border-color:var(--BN);}
+.sf-pill[data-f="PH"].active{background:var(--PH);border-color:var(--PH);}
+.sf-pill[data-f="PN"].active{background:var(--PN);border-color:var(--PN);}
+.sf-pill[data-f="TOSS-UP"].active{background:#b45309;border-color:#b45309;}
+.sf-pill[data-f="BERTUKAR"].active{background:#7c3aed;border-color:#7c3aed;}
+.sf-sort{font-family:'JetBrains Mono',monospace;font-size:10px;padding:6px 10px;border-radius:7px;border:1.5px solid var(--border2);background:var(--bg3);color:var(--dim);cursor:pointer;outline:none;}
+.sf-count{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);white-space:nowrap;}
+
+/* ── AI ANALYST PANEL ── */
+.ai-panel{padding:16px 20px 0;}
+.ai-box{border:2px solid var(--purple);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.ai-header{background:rgba(124,58,237,.06);padding:13px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(124,58,237,.2);}
+.ai-icon{width:32px;height:32px;border-radius:8px;background:var(--purple);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-icon svg{fill:#fff;}
+.ai-hdr-text{flex:1;}
+.ai-title{font-size:14px;font-weight:700;color:var(--purple);letter-spacing:-.2px;}
+.ai-sub{font-size:11px;color:var(--dim);margin-top:1px;}
+.ai-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid var(--purple);color:var(--purple);background:rgba(124,58,237,.08);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ai-btn:hover:not(:disabled){background:var(--purple);color:#fff;}
+.ai-btn:disabled{opacity:.45;cursor:not-allowed;}
+.ai-output{padding:16px 18px;min-height:60px;}
+.ai-loading{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:13px;}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);animation:pulse 1.2s ease-in-out infinite;}
+.ai-dot:nth-child(2){animation-delay:.2s;}
+.ai-dot:nth-child(3){animation-delay:.4s;}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(.8);}50%{opacity:1;transform:scale(1.2);}}
+.ai-text{font-size:13.5px;line-height:1.75;color:var(--text);}
+.ai-text strong{font-weight:700;}
+.ai-text .ai-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;margin:0 2px;}
+.ai-text .tag-bn{background:var(--BN-l);color:var(--BN);}
+.ai-text .tag-ph{background:var(--PH-l);color:var(--PH);}
+.ai-text .tag-pn{background:var(--PN-l);color:var(--PN);}
+.ai-context{display:flex;gap:8px;flex-wrap:wrap;padding:10px 18px;border-top:1px solid rgba(124,58,237,.12);background:rgba(124,58,237,.03);}
+.ai-ctx-item{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.2);padding:3px 8px;border-radius:4px;}
+.ai-empty{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--faint);font-style:italic;}
+.ai-prompt-row{display:flex;gap:6px;flex-wrap:wrap;padding:0 18px 14px;}
+.ai-qbtn{font-family:'JetBrains Mono',monospace;font-size:10px;padding:5px 10px;border-radius:6px;border:1.5px solid rgba(124,58,237,.3);background:rgba(124,58,237,.05);color:var(--purple);cursor:pointer;transition:all .15s;}
+.ai-qbtn:hover{background:rgba(124,58,237,.12);}
+
+/* hidden filter */
+.dun-card.sf-hidden{display:none;}
+
+@media(max-width:720px){
+  .scoreboard{grid-template-columns:1fr 1fr;}
+  .dun-body.open{grid-template-columns:1fr;}
+  .body-col{border-right:none;border-bottom:1px solid var(--border);}
+  .gs-grid{grid-template-columns:1fr;}
+  .cover-title{font-size:26px;}
+  .ctrl-wrap,.dun-sec,.cover{padding-left:14px;padding-right:14px;}
+  nav{padding:10px 14px;}
+}
+@media print{nav{display:none;}.dun-card{break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">PRN MELAKA 2026</div>
+  <div class="nav-links">
+    <a href="#scoreboard">Keputusan</a>
+    <a href="#ctrl">Kawalan</a>
+    <a href="#ai-analyst">🤖 Analis AI</a>
+    <a href="#dun-list">28 DUN</a>
+  </div>
+  <button class="nav-reset" onclick="resetAll()">↺ Reset</button>
+</nav>
+
+<!-- COVER + SCOREBOARD -->
+<div class="cover" id="scoreboard">
+  <div class="eyebrow">SIMULATOR INTERAKTIF &nbsp;·&nbsp; SENARIO PLANNING</div>
+  <div class="cover-title">PRN Melaka 2026<br/>Swing + Demografi Umur</div>
+  <div class="cover-sub">Laraskan swing koalisi, kumpulan umur & isu lokaliti — masa nyata</div>
+
+  <div class="scoreboard">
+    <div class="sc-card" id="scard-BN" style="background:var(--BN-l);border-color:var(--BN-b);">
+      <div class="sc-lbl" style="color:var(--BN);">BN</div>
+      <div class="sc-num" id="snum-BN" style="color:var(--BN);">—</div>
+      <div class="sc-diff" id="sdiff-BN"></div>
+      <div class="sc-base">GE15: 21 kerusi</div>
+    </div>
+    <div class="sc-card" id="scard-PH" style="background:var(--PH-l);border-color:var(--PH-b);">
+      <div class="sc-lbl" style="color:var(--PH);">PH</div>
+      <div class="sc-num" id="snum-PH" style="color:var(--PH);">—</div>
+      <div class="sc-diff" id="sdiff-PH"></div>
+      <div class="sc-base">GE15: 5 kerusi</div>
+    </div>
+    <div class="sc-card" id="scard-PN" style="background:var(--PN-l);border-color:var(--PN-b);">
+      <div class="sc-lbl" style="color:var(--PN);">PN</div>
+      <div class="sc-num" id="snum-PN" style="color:var(--PN);">—</div>
+      <div class="sc-diff" id="sdiff-PN"></div>
+      <div class="sc-base">GE15: 2 kerusi</div>
+    </div>
+    <div class="sc-maj" id="smaj">
+      <div class="maj-icon" id="smaj-icon">—</div>
+      <div class="maj-text" id="smaj-text">—</div>
+      <div class="maj-sub">Majoriti: 15</div>
+    </div>
+  </div>
+
+  <div class="bar-wrap">
+    <div class="bar-title">TABURAN 28 KERUSI DUN</div>
+    <div class="seat-bar" id="main-bar"></div>
+    <div class="maj-line-wrap"><div class="maj-line" id="maj-line"></div><div class="maj-lbl" id="maj-lbl">▲ 15</div></div>
+    <div class="bar-legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--BN);"></div><span style="color:var(--BN);">BN</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--PH);"></div><span style="color:var(--PH);">PH</span></div>
+      <div class="leg"><div class="leg-dot" style="background:var(--PN);"></div><span style="color:var(--PN);">PN</span></div>
+      <div class="leg"><div style="width:2px;height:12px;background:var(--purple);border-radius:1px;"></div><span style="color:var(--purple);">Majoriti</span></div>
+    </div>
+  </div>
+  <div class="changes" id="changes-box">
+    <div class="ch-title">⚡ KERUSI BERTUKAR TANGAN</div>
+    <div id="changes-list"></div>
+  </div>
+</div>
+
+<!-- CONTROL PANELS -->
+<div class="ctrl-wrap" id="ctrl">
+  <div class="ctrl-tabs">
+    <button class="ctrl-tab active" onclick="switchCtrl('global',this)">🎚️ SWING KOALISI</button>
+    <button class="ctrl-tab" onclick="switchCtrl('age',this)">👥 SWING UMUR</button>
+    <button class="ctrl-tab" onclick="switchCtrl('isu',this)">📍 ISU LOKALITI</button>
+  </div>
+
+  <!-- PANEL 1: Global Swing -->
+  <div class="ctrl-panel active" id="panel-global">
+    <div class="gs-grid">
+      <div class="gs-item">
+        <div class="gs-top"><span class="gs-key" style="color:var(--BN);">BN</span><span class="gs-val" id="gv-BN" style="color:var(--BN);">0%</span></div>
+        <input type="range" min="-20" max="20" step="0.5" value="0" id="gs-BN" oninput="updateGlobal('BN',this.value)" style="accent-color:var(--BN);"/>
+        <div style="font-size:11px;color:var(--faint);margin-top:3px;">Affect DUN tanpa swing manual</div>
+      </div>
+      <div class="gs-item">
+        <div class="gs-top"><span class="gs-key" style="color:var(--PH);">PH</span><span class="gs-val" id="gv-PH" style="color:var(--PH);">0%</span></div>
+        <input type="range" min="-20" max="20" step="0.5" value="0" id="gs-PH" oninput="updateGlobal('PH',this.value)" style="accent-color:var(--PH);"/>
+      </div>
+      <div class="gs-item">
+        <div class="gs-top"><span class="gs-key" style="color:var(--PN);">PN</span><span class="gs-val" id="gv-PN" style="color:var(--PN);">0%</span></div>
+        <input type="range" min="-20" max="20" step="0.5" value="0" id="gs-PN" oninput="updateGlobal('PN',this.value)" style="accent-color:var(--PN);"/>
+      </div>
+    </div>
+    <div class="preset-row">
+      <span class="preset-lbl">Preset:</span>
+      <button class="preset-btn" onclick="applyPreset(0,0,0)">GE15</button>
+      <button class="preset-btn" onclick="applyPreset(8,-4,-4)">🔴 BN Bangkit</button>
+      <button class="preset-btn" onclick="applyPreset(-4,-4,8)">🟢 Gelombang Hijau</button>
+      <button class="preset-btn" onclick="applyPreset(-4,8,-4)">🔵 PH Surge</button>
+      <button class="preset-btn" onclick="applyPreset(10,-10,0)">🤝 BN+PH</button>
+      <button class="preset-btn" onclick="applyPreset(10,0,-10)">⚡ BN+PN</button>
+    </div>
+  </div>
+
+  <!-- PANEL 2: Age Swing -->
+  <div class="ctrl-panel" id="panel-age">
+    <div class="age-intro">
+      <strong>Cara kerja swing umur:</strong> Pilih koalisi sasaran dan magnitud swing untuk setiap kumpulan umur.
+      Kesan berbeza-beza mengikut komposisi umur setiap DUN — kawasan lebih muda akan terkesan lebih besar oleh swing belia.
+      Swing umur <em>digabung</em> dengan swing koalisi global.
+    </div>
+    <div class="age-swing-grid">
+      <!-- BELIA -->
+      <div class="as-card" style="background:var(--youth-l);border-color:var(--youth-b);">
+        <div class="as-header">
+          <div>
+            <div class="as-title" style="color:var(--PH);">🎓 Belia (18–39 tahun)</div>
+            <div class="as-stats" id="age-stats-youth">— pengundi merentas 28 DUN</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">Swing belia ke:</div>
+            <div id="youth-dir-lbl" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--PH);">PH</div>
+          </div>
+        </div>
+        <div class="as-direction">
+          <button class="dir-btn" id="yd-BN" onclick="setAgeDir('youth','BN')">BN</button>
+          <button class="dir-btn active-PH" id="yd-PH" onclick="setAgeDir('youth','PH')">PH</button>
+          <button class="dir-btn" id="yd-PN" onclick="setAgeDir('youth','PN')">PN</button>
+        </div>
+        <div class="as-slider-row">
+          <span class="as-slider-label">0%</span>
+          <input type="range" min="0" max="20" step="0.5" value="0" id="age-sl-youth" oninput="updateAgeSwing('youth',this.value)" style="accent-color:var(--PH);"/>
+          <span class="as-slider-label">20%</span>
+          <span class="as-val" id="age-val-youth" style="color:var(--PH);">0%</span>
+        </div>
+        <div class="as-effect" id="age-eff-youth">Tiada swing — laraskan slider untuk lihat kesan</div>
+      </div>
+
+      <!-- PERTENGAHAN -->
+      <div class="as-card" style="background:var(--mid-l);border-color:var(--mid-b);">
+        <div class="as-header">
+          <div>
+            <div class="as-title" style="color:var(--mid);">⚖️ Pertengahan (40–59 tahun)</div>
+            <div class="as-stats" id="age-stats-mid">— pengundi merentas 28 DUN</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">Swing ke:</div>
+            <div id="mid-dir-lbl" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--BN);">BN</div>
+          </div>
+        </div>
+        <div class="as-direction">
+          <button class="dir-btn active-BN" id="md-BN" onclick="setAgeDir('mid','BN')">BN</button>
+          <button class="dir-btn" id="md-PH" onclick="setAgeDir('mid','PH')">PH</button>
+          <button class="dir-btn" id="md-PN" onclick="setAgeDir('mid','PN')">PN</button>
+        </div>
+        <div class="as-slider-row">
+          <span class="as-slider-label">0%</span>
+          <input type="range" min="0" max="20" step="0.5" value="0" id="age-sl-mid" oninput="updateAgeSwing('mid',this.value)" style="accent-color:var(--mid);"/>
+          <span class="as-slider-label">20%</span>
+          <span class="as-val" id="age-val-mid" style="color:var(--mid);">0%</span>
+        </div>
+        <div class="as-effect" id="age-eff-mid">Tiada swing — laraskan slider untuk lihat kesan</div>
+      </div>
+
+      <!-- WARGA EMAS -->
+      <div class="as-card" style="background:var(--senior-l);border-color:var(--senior-b);">
+        <div class="as-header">
+          <div>
+            <div class="as-title" style="color:var(--senior);">🏠 Warga Emas (60+ tahun)</div>
+            <div class="as-stats" id="age-stats-senior">— pengundi merentas 28 DUN</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--faint);">Swing ke:</div>
+            <div id="senior-dir-lbl" style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--BN);">BN</div>
+          </div>
+        </div>
+        <div class="as-direction">
+          <button class="dir-btn active-BN" id="sd-BN" onclick="setAgeDir('senior','BN')">BN</button>
+          <button class="dir-btn" id="sd-PH" onclick="setAgeDir('senior','PH')">PH</button>
+          <button class="dir-btn" id="sd-PN" onclick="setAgeDir('senior','PN')">PN</button>
+        </div>
+        <div class="as-slider-row">
+          <span class="as-slider-label">0%</span>
+          <input type="range" min="0" max="20" step="0.5" value="0" id="age-sl-senior" oninput="updateAgeSwing('senior',this.value)" style="accent-color:var(--senior);"/>
+          <span class="as-slider-label">20%</span>
+          <span class="as-val" id="age-val-senior" style="color:var(--senior);">0%</span>
+        </div>
+        <div class="as-effect" id="age-eff-senior">Tiada swing — laraskan slider untuk lihat kesan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PANEL 3: Isu -->
+  <div class="ctrl-panel" id="panel-isu">
+    <div class="isu-toggle-row">
+      <div>
+        <div class="isu-toggle-lbl">Aktifkan kesan isu lokaliti</div>
+        <div style="font-size:12px;color:var(--dim);">56 isu direkod — impak automatik pada swing per DUN</div>
+      </div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="isu-toggle" checked onchange="renderAll()"/>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="isu-list-preview" id="isu-preview"></div>
+  </div>
+</div>
+
+<!-- AI ANALYST PANEL -->
+<div class="ai-panel" id="ai-analyst">
+  <div class="ai-box">
+    <div class="ai-header">
+      <div class="ai-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+      </div>
+      <div class="ai-hdr-text">
+        <div class="ai-title">Analisis Senario</div>
+        <div class="ai-sub">Analisis naratif automatik berdasarkan tetapan simulasi semasa anda</div>
+      </div>
+      <button class="ai-btn" id="ai-run-btn" onclick="runAnalysis()">▶ Analisis Sekarang</button>
+    </div>
+    <div class="ai-output" id="ai-output">
+      <div class="ai-empty">Tetapkan swing & klik "Analisis Sekarang" — AI akan hasilkan naratif strategik PRN Melaka berdasarkan simulasi anda.</div>
+    </div>
+    <div class="ai-prompt-row" id="ai-qrow" style="display:none;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);align-self:center;">Soal lanjut:</span>
+      <button class="ai-qbtn" onclick="runCustomQ('Apakah kawasan paling kritikal untuk dimenangi?')">Kawasan kritikal?</button>
+      <button class="ai-qbtn" onclick="runCustomQ('Analisis risiko untuk setiap koalisi dalam senario ini')">Analisis risiko</button>
+      <button class="ai-qbtn" onclick="runCustomQ('Apakah strategi kempen yang perlu difokuskan?')">Strategi kempen</button>
+      <button class="ai-qbtn" onclick="runCustomQ('Bandingkan dengan senario GE15 asal')">Vs GE15</button>
+    </div>
+    <div class="ai-context" id="ai-ctx" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- SEARCH + FILTER BAR -->
+<div class="sf-bar">
+  <div class="sf-input-wrap">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="sf-search" type="text" placeholder="Cari DUN, kawasan, calon..." id="sf-search" oninput="applyFilter()"/>
+  </div>
+  <div class="sf-filters">
+    <button class="sf-pill active" data-f="ALL" onclick="setFilter('ALL',this)">Semua</button>
+    <button class="sf-pill" data-f="BN" onclick="setFilter('BN',this)">BN</button>
+    <button class="sf-pill" data-f="PH" onclick="setFilter('PH',this)">PH</button>
+    <button class="sf-pill" data-f="PN" onclick="setFilter('PN',this)">PN</button>
+    <button class="sf-pill" data-f="TOSS-UP" onclick="setFilter('TOSS-UP',this)">Toss-Up</button>
+    <button class="sf-pill" data-f="BERTUKAR" onclick="setFilter('BERTUKAR',this)">⚡ Bertukar</button>
+  </div>
+  <select class="sf-sort" id="sf-sort" onchange="applyFilter()">
+    <option value="DEFAULT">Tertib asal</option>
+    <option value="MARGIN_ASC">Majoriti ↑ kecil</option>
+    <option value="MARGIN_DESC">Majoriti ↓ besar</option>
+    <option value="VOTERS_DESC">Pengundi ↓ ramai</option>
+    <option value="VOTERS_ASC">Pengundi ↑ kurang</option>
+    <option value="YOUTH_DESC">Belia ↓ tinggi</option>
+  </select>
+  <span class="sf-count" id="sf-count">28 DUN</span>
+</div>
+
+<!-- DUN LIST -->
+<div class="dun-sec" id="dun-list">
+  <div class="dun-sec-title">ANALISIS 28 KERUSI DUN</div>
+  <div id="dun-container"></div>
+</div>
+
+<footer>
+  <p>
+    DATA PENGUNDI: SPR GE15 2022 (THE STAR) &nbsp;·&nbsp; PROFIL UMUR: ANGGARAN BERDASARKAN DOSM/SPR MELAKA &nbsp;·&nbsp;<br/>
+    MODEL SWING SERAGAM + SWING UMUR PROPORSIONAL &nbsp;·&nbsp; BUKAN RAMALAN RASMI
+  </p>
+</footer>
+
+<script>
+const DUN = [{"code": "N1", "name": "Kuala Linggi", "region": "Alor Gajah", "voters": 10928, "turnout": 6968, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 3554, "name": "Rosli Abdullah"}, {"c": "PH", "v": 1718, "name": "Ustaz Julas"}, {"c": "PN", "v": 1645, "name": "Aziah Mohd Sa'ad"}, {"c": "OTH", "v": 51, "name": "IND"}], "age_counts": [525, 2022, 2207, 2131, 1945, 1322, 601, 175], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 4754, "mid": 4076, "senior": 2098, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N2", "name": "Tanjung Bidara", "region": "Alor Gajah", "voters": 10133, "turnout": 7243, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 3559, "name": "Ab Rauf"}, {"c": "PN", "v": 3195, "name": "Mas Ermieyati"}, {"c": "PH", "v": 489, "name": "Zainal Hassan"}], "age_counts": [486, 1875, 2047, 1976, 1804, 1226, 557, 162], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 4408, "mid": 3780, "senior": 1945, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N3", "name": "Ayer Limau", "region": "Alor Gajah", "voters": 11227, "turnout": 7389, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 3838, "name": "Hameed Basheer"}, {"c": "PN", "v": 2753, "name": "Nordina"}, {"c": "PH", "v": 798, "name": "Kak Maz"}], "age_counts": [539, 2077, 2268, 2189, 1998, 1358, 617, 181], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 4884, "mid": 4187, "senior": 2156, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N4", "name": "Lendu", "region": "Alor Gajah", "voters": 10561, "turnout": 7023, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 4486, "name": "Sulaiman Md Ali"}, {"c": "PN", "v": 1382, "name": "Mejar Dolah"}, {"c": "PH", "v": 1155, "name": "Asri Ibrahim"}], "age_counts": [549, 2091, 2197, 1996, 1743, 1215, 581, 189], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 4837, "mid": 3739, "senior": 1985, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N5", "name": "Taboh Naning", "region": "Alor Gajah", "voters": 8661, "turnout": 5539, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 3170, "name": "Zulkiflee Mohd Zin"}, {"c": "PN", "v": 1345, "name": "Cikgu Hashim"}, {"c": "PH", "v": 1024, "name": "Zairi Suboh"}], "age_counts": [416, 1602, 1750, 1689, 1542, 1048, 476, 138], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 3768, "mid": 3231, "senior": 1662, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N6", "name": "Rembia", "region": "Alor Gajah", "voters": 15756, "turnout": 10152, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 4224, "name": "Muhammad Jailani"}, {"c": "PH", "v": 3364, "name": "Zamri Pakiri"}, {"c": "PN", "v": 2433, "name": "Zamzuri"}, {"c": "OTH", "v": 131, "name": "IND"}], "age_counts": [819, 3120, 3277, 2978, 2600, 1812, 867, 283], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 7216, "mid": 5578, "senior": 2962, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N7", "name": "Gadek", "region": "Alor Gajah", "voters": 12641, "turnout": 7677, "profile": "mixed", "candidates": [{"c": "BN", "v": 3022, "name": "Vp Shanmugam"}, {"c": "PH", "v": 2463, "name": "G. Saminathan"}, {"c": "PN", "v": 2041, "name": "Amir Muharam"}, {"c": "OTH", "v": 151, "name": "IND"}], "age_counts": [695, 2591, 2680, 2339, 2023, 1391, 733, 189], "age_pcts": [5.5, 20.5, 21.2, 18.5, 16.0, 11.0, 5.8, 1.5], "youth": 5966, "mid": 4362, "senior": 2313, "youth_pct": 47.2, "mid_pct": 34.5, "senior_pct": 18.3}, {"code": "N8", "name": "Machap Jaya", "region": "Alor Gajah", "voters": 12487, "turnout": 7996, "profile": "mixed", "candidates": [{"c": "BN", "v": 3732, "name": "Ngwe Hee Sem"}, {"c": "PH", "v": 2794, "name": "Law Bing Haw"}, {"c": "PN", "v": 1202, "name": "Tai Siong Jiul"}, {"c": "OTH", "v": 268, "name": "IND"}], "age_counts": [687, 2560, 2647, 2310, 1998, 1374, 724, 187], "age_pcts": [5.5, 20.5, 21.2, 18.5, 16.0, 11.0, 5.8, 1.5], "youth": 5894, "mid": 4308, "senior": 2285, "youth_pct": 47.2, "mid_pct": 34.5, "senior_pct": 18.3}, {"code": "N9", "name": "Durian Tunggal", "region": "Alor Gajah", "voters": 13312, "turnout": 9033, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 3663, "name": "Zahari Abd Kalil"}, {"c": "PH", "v": 3104, "name": "Sofi Wahab"}, {"c": "PN", "v": 2208, "name": "Ja'afar Othman"}, {"c": "OTH", "v": 58, "name": "IND"}], "age_counts": [692, 2636, 2769, 2516, 2196, 1531, 732, 240], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 6097, "mid": 4712, "senior": 2503, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N10", "name": "Asahan", "region": "Jasin", "voters": 15745, "turnout": 9968, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 5659, "name": "Fairul Nizam"}, {"c": "PH", "v": 2666, "name": "Idris Haron"}, {"c": "PN", "v": 1364, "name": "Dhanesh Basil"}, {"c": "OTH", "v": 279, "name": "IND"}], "age_counts": [756, 2913, 3180, 3070, 2803, 1905, 866, 252], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 6849, "mid": 5873, "senior": 3023, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N11", "name": "Sungai Udang", "region": "KM Tengah", "voters": 22793, "turnout": 15554, "profile": "semi_urban", "candidates": [{"c": "PN", "v": 6789, "name": "Mohd Aleef Yusof"}, {"c": "BN", "v": 6259, "name": "Mohamad Ali"}, {"c": "PH", "v": 2035, "name": "Hasmorni Tamby"}, {"c": "OTH", "v": 471, "name": "IND"}], "age_counts": [1322, 4900, 5014, 4148, 3533, 2393, 1185, 298], "age_pcts": [5.8, 21.5, 22.0, 18.2, 15.5, 10.5, 5.2, 1.3], "youth": 11236, "mid": 7681, "senior": 3876, "youth_pct": 49.3, "mid_pct": 33.7, "senior_pct": 17.0}, {"code": "N12", "name": "Pantai Kundor", "region": "KM Tengah", "voters": 15469, "turnout": 9892, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 3960, "name": "Tuminah Kadi"}, {"c": "PN", "v": 3133, "name": "Ridzwan Mustafa"}, {"c": "PH", "v": 2799, "name": "Nor Azman Hassan"}], "age_counts": [804, 3063, 3218, 2924, 2552, 1779, 851, 278], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 7085, "mid": 5476, "senior": 2908, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N13", "name": "Paya Rumput", "region": "KM Tengah", "voters": 26455, "turnout": 17211, "profile": "semi_urban", "candidates": [{"c": "BN", "v": 6830, "name": "Rais Yasin"}, {"c": "PH", "v": 6201, "name": "Shamsul Iskandar"}, {"c": "PN", "v": 3972, "name": "Muhammad Faris"}, {"c": "OTH", "v": 208, "name": "IND"}], "age_counts": [1534, 5688, 5820, 4815, 4101, 2778, 1376, 343], "age_pcts": [5.8, 21.5, 22.0, 18.2, 15.5, 10.5, 5.2, 1.3], "youth": 13042, "mid": 8916, "senior": 4497, "youth_pct": 49.3, "mid_pct": 33.7, "senior_pct": 17.0}, {"code": "N14", "name": "Kelebang", "region": "KM Tengah", "voters": 19976, "turnout": 13064, "profile": "semi_urban", "candidates": [{"c": "BN", "v": 5028, "name": "Lim Ban Hong"}, {"c": "PH", "v": 4152, "name": "Gue Teck"}, {"c": "PN", "v": 3884, "name": "Bakri Jamaluddin"}], "age_counts": [1159, 4295, 4395, 3636, 3096, 2097, 1039, 259], "age_pcts": [5.8, 21.5, 22.0, 18.2, 15.5, 10.5, 5.2, 1.3], "youth": 9849, "mid": 6732, "senior": 3395, "youth_pct": 49.3, "mid_pct": 33.7, "senior_pct": 17.0}, {"code": "N15", "name": "Pengkalan Batu", "region": "KM Tengah", "voters": 20821, "turnout": 13528, "profile": "semi_urban", "candidates": [{"c": "BN", "v": 4839, "name": "Hjh Kalsom Noordin"}, {"c": "PH", "v": 4708, "name": "Muhamad Danish"}, {"c": "PN", "v": 2681, "name": "Mohd Azrudin"}, {"c": "OTH", "v": 1300, "name": "IND"}], "age_counts": [1208, 4477, 4581, 3789, 3227, 2186, 1083, 270], "age_pcts": [5.8, 21.5, 22.0, 18.2, 15.5, 10.5, 5.2, 1.3], "youth": 10266, "mid": 7016, "senior": 3539, "youth_pct": 49.3, "mid_pct": 33.7, "senior_pct": 17.0}, {"code": "N16", "name": "Ayer Keroh", "region": "KM Tengah", "voters": 25945, "turnout": 15773, "profile": "urban", "candidates": [{"c": "PH", "v": 9459, "name": "Kerk Chee Yee"}, {"c": "BN", "v": 3835, "name": "Yong Fun Juan"}, {"c": "PN", "v": 2479, "name": "Michael Gan"}], "age_counts": [1609, 5967, 6097, 4618, 3762, 2465, 1168, 259], "age_pcts": [6.2, 23.0, 23.5, 17.8, 14.5, 9.5, 4.5, 1.0], "youth": 13673, "mid": 8380, "senior": 3892, "youth_pct": 52.7, "mid_pct": 32.3, "senior_pct": 15.0}, {"code": "N17", "name": "Bukit Katil", "region": "KM Tengah", "voters": 25410, "turnout": 16377, "profile": "urban", "candidates": [{"c": "PH", "v": 6805, "name": "Adly Zahari"}, {"c": "BN", "v": 5748, "name": "Hasnoor Husin"}, {"c": "PN", "v": 3715, "name": "Muhammad Al Afiz"}, {"c": "OTH", "v": 109, "name": "IND"}], "age_counts": [1575, 5844, 5971, 4523, 3684, 2414, 1143, 256], "age_pcts": [6.2, 23.0, 23.5, 17.8, 14.5, 9.5, 4.5, 1.0], "youth": 13390, "mid": 8207, "senior": 3813, "youth_pct": 52.7, "mid_pct": 32.3, "senior_pct": 15.0}, {"code": "N18", "name": "Ayer Molek", "region": "KM Tengah", "voters": 17863, "turnout": 12430, "profile": "semi_urban", "candidates": [{"c": "BN", "v": 6348, "name": "Rahmad Mariman"}, {"c": "PN", "v": 3546, "name": "Mohd Fadly Samin"}, {"c": "PH", "v": 2446, "name": "Cikgu Rafee"}, {"c": "OTH", "v": 90, "name": "IND"}], "age_counts": [1036, 3841, 3930, 3251, 2769, 1876, 929, 231], "age_pcts": [5.8, 21.5, 22.0, 18.2, 15.5, 10.5, 5.2, 1.3], "youth": 8807, "mid": 6020, "senior": 3036, "youth_pct": 49.3, "mid_pct": 33.7, "senior_pct": 17.0}, {"code": "N19", "name": "Kesidang", "region": "Bandaraya", "voters": 37304, "turnout": 22425, "profile": "urban_chinese", "candidates": [{"c": "PH", "v": 14769, "name": "Seah Shoo Chin"}, {"c": "BN", "v": 4532, "name": "Leong Hui Ying"}, {"c": "PN", "v": 3124, "name": "Patrick Ng"}], "age_counts": [2052, 7461, 7834, 6901, 6342, 4103, 2052, 559], "age_pcts": [5.5, 20.0, 21.0, 18.5, 17.0, 11.0, 5.5, 1.5], "youth": 17347, "mid": 13243, "senior": 6714, "youth_pct": 46.5, "mid_pct": 35.5, "senior_pct": 18.0}, {"code": "N20", "name": "Kota Laksamana", "region": "Bandaraya", "voters": 28777, "turnout": 16712, "profile": "urban_chinese", "candidates": [{"c": "PH", "v": 13508, "name": "Low Chee Leong"}, {"c": "BN", "v": 2014, "name": "Benjamin Low"}, {"c": "PN", "v": 1190, "name": "Fong Khai Ling"}], "age_counts": [1583, 5755, 6043, 5324, 4892, 3165, 1583, 432], "age_pcts": [5.5, 20.0, 21.0, 18.5, 17.0, 11.0, 5.5, 1.5], "youth": 13381, "mid": 10216, "senior": 5180, "youth_pct": 46.5, "mid_pct": 35.5, "senior_pct": 18.0}, {"code": "N21", "name": "Duyong", "region": "Bandaraya", "voters": 18237, "turnout": 12211, "profile": "urban", "candidates": [{"c": "BN", "v": 4684, "name": "Mohd Noor Helmy"}, {"c": "PH", "v": 4484, "name": "Damian Baba Yeo"}, {"c": "PN", "v": 2874, "name": "Kamarudin Sidek"}, {"c": "OTH", "v": 230, "name": "IND"}], "age_counts": [1131, 4195, 4286, 3246, 2644, 1733, 821, 181], "age_pcts": [6.2, 23.0, 23.5, 17.8, 14.5, 9.5, 4.5, 1.0], "youth": 9612, "mid": 5890, "senior": 2735, "youth_pct": 52.7, "mid_pct": 32.3, "senior_pct": 15.0}, {"code": "N22", "name": "Bandar Hilir", "region": "Bandaraya", "voters": 19909, "turnout": 11197, "profile": "urban_chinese", "candidates": [{"c": "PH", "v": 9091, "name": "Leng Chau Yen"}, {"c": "BN", "v": 1313, "name": "Lee Kah Sean"}, {"c": "PN", "v": 634, "name": "Clarice Chan"}, {"c": "OTH", "v": 159, "name": "IND"}], "age_counts": [1095, 3982, 4181, 3683, 3385, 2190, 1095, 298], "age_pcts": [5.5, 20.0, 21.0, 18.5, 17.0, 11.0, 5.5, 1.5], "youth": 9258, "mid": 7068, "senior": 3583, "youth_pct": 46.5, "mid_pct": 35.5, "senior_pct": 18.0}, {"code": "N23", "name": "Telok Mas", "region": "Jasin", "voters": 20712, "turnout": 14072, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 6052, "name": "Abdul Razak"}, {"c": "PN", "v": 3976, "name": "Mohd Rafiq"}, {"c": "PH", "v": 3891, "name": "Ashraf Minghat"}, {"c": "OTH", "v": 153, "name": "IND"}], "age_counts": [1077, 4101, 4308, 3915, 3417, 2382, 1139, 373], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 9486, "mid": 7332, "senior": 3894, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N24", "name": "Bemban", "region": "Jasin", "voters": 18573, "turnout": 12169, "profile": "mixed", "candidates": [{"c": "PN", "v": 4211, "name": "Mohd Yadzil"}, {"c": "BN", "v": 3883, "name": "Koh Chin Han"}, {"c": "PH", "v": 3095, "name": "Tey Kok Kiew"}, {"c": "OTH", "v": 980, "name": "IND"}], "age_counts": [1022, 3807, 3937, 3436, 2972, 2043, 1077, 279], "age_pcts": [5.5, 20.5, 21.2, 18.5, 16.0, 11.0, 5.8, 1.5], "youth": 8766, "mid": 6408, "senior": 3399, "youth_pct": 47.2, "mid_pct": 34.5, "senior_pct": 18.3}, {"code": "N25", "name": "Rim", "region": "Jasin", "voters": 13672, "turnout": 8910, "profile": "rural_semi", "candidates": [{"c": "BN", "v": 4037, "name": "Khaidhirah Abu Zahar"}, {"c": "PN", "v": 2710, "name": "Azalina Abd Rahman"}, {"c": "PH", "v": 2163, "name": "Prasanth Kumar"}], "age_counts": [711, 2707, 2844, 2584, 2256, 1572, 752, 246], "age_pcts": [5.2, 19.8, 20.8, 18.9, 16.5, 11.5, 5.5, 1.8], "youth": 6262, "mid": 4840, "senior": 2570, "youth_pct": 45.8, "mid_pct": 35.4, "senior_pct": 18.8}, {"code": "N26", "name": "Serkam", "region": "Jasin", "voters": 15977, "turnout": 11631, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 5038, "name": "Zaidi Attan"}, {"c": "PN", "v": 4959, "name": "Ahmad Bilal"}, {"c": "PH", "v": 1535, "name": "Ustaz Muhammad"}, {"c": "OTH", "v": 99, "name": "IND"}], "age_counts": [767, 2956, 3227, 3116, 2844, 1933, 879, 255], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 6950, "mid": 5960, "senior": 3067, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N27", "name": "Merlimau", "region": "Jasin", "voters": 14014, "turnout": 9640, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 5633, "name": "Dr Akmal Saleh"}, {"c": "PH", "v": 2385, "name": "Cikgu Azrin"}, {"c": "PN", "v": 1622, "name": "Abd Alim Shapie"}], "age_counts": [673, 2593, 2831, 2733, 2494, 1696, 771, 223], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 6097, "mid": 5227, "senior": 2690, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}, {"code": "N28", "name": "Sungai Rambai", "region": "Jasin", "voters": 11837, "turnout": 7905, "profile": "rural_malay", "candidates": [{"c": "BN", "v": 3801, "name": "Siti Faizah"}, {"c": "PN", "v": 2664, "name": "Muhammad Jefri"}, {"c": "PH", "v": 1356, "name": "Farzana Hayani"}, {"c": "OTH", "v": 84, "name": "IND"}], "age_counts": [568, 2190, 2391, 2308, 2107, 1432, 651, 190], "age_pcts": [4.8, 18.5, 20.2, 19.5, 17.8, 12.1, 5.5, 1.6], "youth": 5149, "mid": 4415, "senior": 2273, "youth_pct": 43.5, "mid_pct": 37.3, "senior_pct": 19.2}];
+const ISSUES = {"N1": [{"cat": "Infrastruktur", "label": "Jalan kampung rosak \u2014 Jln Kuala Linggi\u2013Bkt Bruang", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Ekonomi", "label": "Nelayan pantai \u2014 subsidi bot & diesel kurang", "sentiment": "neg", "impact": 2, "affects": "PH"}], "N2": [{"cat": "Pembangunan", "label": "Projek resort Tanjung Bidara terbengkalai", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Agama", "label": "Isu tanah wakaf \u2014 sokongan PN/PAS meningkat", "sentiment": "pos", "impact": 2, "affects": "PN"}], "N3": [{"cat": "Pertanian", "label": "Petani durian \u2014 turun naik harga pasaran China", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Bekalan air bersih tidak stabil", "sentiment": "neg", "impact": 1, "affects": "BN"}], "N4": [{"cat": "Pendidikan", "label": "UiTM Lendu \u2014 isu pengangkutan pelajar", "sentiment": "neg", "impact": 1, "affects": "PH"}, {"cat": "Pembangunan", "label": "Perindustrian ringan \u2014 peluang pekerjaan", "sentiment": "pos", "impact": 2, "affects": "BN"}], "N5": [{"cat": "Pertanian", "label": "Ladang getah & sawit \u2014 harga komoditi jatuh", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Jambatan kampung uzur", "sentiment": "neg", "impact": 1, "affects": "BN"}], "N6": [{"cat": "Perumahan", "label": "Projek PR1MA tidak siap \u2014 mangsa pembeli", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Ekonomi", "label": "Kawasan perindustrian Rembia \u2014 peluang kerja", "sentiment": "pos", "impact": 2, "affects": "BN"}], "N7": [{"cat": "Kaum", "label": "Komuniti India \u2014 MIC lemah, undi melayang", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Lebuh raya Gadek \u2014 tol tinggi", "sentiment": "neg", "impact": 2, "affects": "PH"}], "N8": [{"cat": "Perumahan", "label": "Machap Baru \u2014 isu pampasan tanah lama", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Ekonomi", "label": "Pasaran tani tidak terurus", "sentiment": "neg", "impact": 1, "affects": "PH"}], "N9": [{"cat": "Banjir", "label": "Banjir kilat \u2014 saliran tersumbat", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Pertanian", "label": "Petani buah-buahan \u2014 masalah pemasaran", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N10": [{"cat": "Perumahan", "label": "PPR Asahan \u2014 penyelenggaraan buruk", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Jalan Asahan\u2013Merlimau dalam keadaan baik", "sentiment": "pos", "impact": 1, "affects": "BN"}], "N11": [{"cat": "Industri", "label": "Sg Udang \u2014 pencemaran sungai kilang", "sentiment": "neg", "impact": 3, "affects": "PN"}, {"cat": "Perumahan", "label": "Rumah mampu milik belum mencukupi", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N12": [{"cat": "Banjir", "label": "Banjir pesisir pantai \u2014 pemecah ombak terbengkalai", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Pelancongan", "label": "Pantai Kundor \u2014 potensi ekopelancongan", "sentiment": "pos", "impact": 1, "affects": "PH"}], "N13": [{"cat": "Infrastruktur", "label": "Paya Rumput \u2014 kesesakan lalu lintas teruk", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Perumahan", "label": "Taman perumahan baru \u2014 permintaan tinggi", "sentiment": "pos", "impact": 2, "affects": "BN"}], "N14": [{"cat": "Industri", "label": "Kilang Kelebang \u2014 bunyi bising & debu", "sentiment": "neg", "impact": 2, "affects": "PN"}, {"cat": "Perumahan", "label": "Taman Kelebang Besar \u2014 infrastruktur tua", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N15": [{"cat": "Pembangunan", "label": "Cadangan stesen KTM Komuter", "sentiment": "pos", "impact": 2, "affects": "BN"}, {"cat": "Perumahan", "label": "Flat kos rendah \u2014 masalah lif & kebocoran", "sentiment": "neg", "impact": 2, "affects": "PH"}], "N16": [{"cat": "Pendidikan", "label": "Sekolah \u2014 kelas sesak, tiada bilik", "sentiment": "neg", "impact": 2, "affects": "PH"}, {"cat": "Pelancongan", "label": "Zoo Melaka \u2014 pengurusan lemah", "sentiment": "neg", "impact": 1, "affects": "PH"}], "N17": [{"cat": "Perumahan", "label": "Bukit Katil \u2014 kadar jenayah kecil meningkat", "sentiment": "neg", "impact": 2, "affects": "PH"}, {"cat": "Pembangunan", "label": "Cadangan pusat beli-belah \u2014 peluang kerja", "sentiment": "pos", "impact": 1, "affects": "BN"}], "N18": [{"cat": "Industri", "label": "Ayer Molek \u2014 pencemaran udara kilang", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Jalan persekutuan dalam keadaan baik", "sentiment": "pos", "impact": 1, "affects": "BN"}], "N19": [{"cat": "Bandar", "label": "Peniaga kecil \u2014 kos sara hidup tinggi", "sentiment": "neg", "impact": 2, "affects": "PH"}, {"cat": "Infrastruktur", "label": "Sistem longkang banjir kilat diselenggara", "sentiment": "pos", "impact": 1, "affects": "PH"}], "N20": [{"cat": "Pelancongan", "label": "Bandaraya Warisan \u2014 kos sewa meningkat", "sentiment": "neg", "impact": 2, "affects": "PH"}, {"cat": "Ekonomi", "label": "Peniaga Jonker Walk \u2014 isu lesen & sewa", "sentiment": "neg", "impact": 2, "affects": "PH"}], "N21": [{"cat": "Banjir", "label": "Duyong \u2014 banjir sungai berulang", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Pembangunan", "label": "Projek tebing sungai terbengkalai", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N22": [{"cat": "Pelancongan", "label": "Bandar Hilir \u2014 hartanah mahal, penduduk berpindah", "sentiment": "neg", "impact": 2, "affects": "PH"}, {"cat": "Warisan", "label": "Bangunan warisan Portugis \u2014 pemeliharaan", "sentiment": "neg", "impact": 1, "affects": "PH"}], "N23": [{"cat": "Pertanian", "label": "Tanah pertanian terancam pembangunan", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Jalan kampung ke pekan Jasin perlu naik taraf", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N24": [{"cat": "Industri", "label": "Bemban \u2014 pekerja kilang asing vs tempatan", "sentiment": "neg", "impact": 2, "affects": "PN"}, {"cat": "Perumahan", "label": "Rumah teres lama \u2014 nilai hartanah rendah", "sentiment": "neg", "impact": 1, "affects": "BN"}], "N25": [{"cat": "Pertanian", "label": "Rim \u2014 ladang buah naga baru, sokongan agro", "sentiment": "pos", "impact": 2, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Jalan ladang \u2014 kondisi teruk waktu hujan", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N26": [{"cat": "Agama", "label": "Serkam \u2014 isu tanah masjid & surau, PN kuat", "sentiment": "pos", "impact": 3, "affects": "PN"}, {"cat": "Pertanian", "label": "Nelayan \u2014 enjin bot lama, tiada subsidi", "sentiment": "neg", "impact": 2, "affects": "BN"}], "N27": [{"cat": "Kesihatan", "label": "Klinik desa \u2014 doktor kurang, giliran panjang", "sentiment": "neg", "impact": 2, "affects": "BN"}, {"cat": "Pembangunan", "label": "Projek PDM jambatan baru siap", "sentiment": "pos", "impact": 2, "affects": "BN"}], "N28": [{"cat": "Pertanian", "label": "Sg Rambai \u2014 tanah sawah terbiar, pesawah tua", "sentiment": "neg", "impact": 3, "affects": "BN"}, {"cat": "Infrastruktur", "label": "Bekalan elektrik tidak stabil", "sentiment": "neg", "impact": 2, "affects": "BN"}]};
+
+const COL={BN:'#b91c1c',PH:'#1d4ed8',PN:'#15803d',OTH:'#374151'};
+const COL_L={BN:'#fff1f2',PH:'#eff6ff',PN:'#f0fdf4',OTH:'#f9fafb'};
+const COL_B={BN:'#fecdd3',PH:'#bfdbfe',PN:'#bbf7d0',OTH:'#e5e7eb'};
+const AGE_COL=['#6366f1','#3b82f6','#06b6d4','#10b981','#f59e0b','#f97316','#ef4444','#9f1239'];
+const GROUPS=['18-20','21-29','30-39','40-49','50-59','60-69','70-79','80+'];
+const BASE={BN:21,PH:5,PN:2,OTH:0};
+const MAJ=15, TOTAL=28;
+const REGION_COL={'Alor Gajah':'#b91c1c','KM Tengah':'#1d4ed8','Bandaraya':'#15803d','Jasin':'#b45309'};
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let gSw = {BN:0,PH:0,PN:0};
+let dunSw = {};
+let expanded = {};
+let ageSwing = {
+  youth: {dir:'PH', mag:0},
+  mid:   {dir:'BN', mag:0},
+  senior:{dir:'BN', mag:0},
+};
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+function fmt(n){ return n.toLocaleString('ms-MY'); }
+function pct(v,t){ return t?(v/t*100).toFixed(1):'0.0'; }
+function clrV(v){ return v>0?'#15803d':v<0?'#b91c1c':'#888'; }
+function stCol(s){ return{SELAMAT:'#15803d',CENDERUNG:'#16a34a',CONDONG:'#b45309','TOSS-UP':'#b91c1c'}[s]||'#888'; }
+function stBg(s){  return{SELAMAT:'#f0fdf4',CENDERUNG:'#dcfce7',CONDONG:'#fffbeb','TOSS-UP':'#fff1f2'}[s]||'#fff'; }
+function stBd(s){  return{SELAMAT:'#86efac',CENDERUNG:'#86efac',CONDONG:'#fde68a','TOSS-UP':'#fecdd3'}[s]||'#ccc'; }
+
+// ── SIMULATION ───────────────────────────────────────────────────────────────
+function computeIssueSw(code){
+  const sw={BN:0,PH:0,PN:0};
+  const isuOn = document.getElementById('isu-toggle')?.checked!==false;
+  if(!isuOn) return sw;
+  (ISSUES[code]||[]).forEach(i=>{
+    const v=i.impact*0.8*(i.sentiment==='pos'?1:-1);
+    if(sw[i.affects]!==undefined) sw[i.affects]+=v;
+  });
+  return sw;
+}
+
+function computeAgeSw(seat){
+  // For each age group: swing % of that group goes toward target coalition
+  const sw={BN:0,PH:0,PN:0};
+  const GROUPS_MAP = [
+    {group:'youth',  idxs:[0,1,2]},
+    {group:'mid',    idxs:[3,4]},
+    {group:'senior', idxs:[5,6,7]},
+  ];
+  GROUPS_MAP.forEach(({group,idxs})=>{
+    const ag = ageSwing[group];
+    if(!ag.mag) return;
+    const groupVoters = idxs.reduce((s,i)=>s+seat.age_counts[i],0);
+    const groupPct = groupVoters/seat.voters; // fraction of total voters
+    const swingAmt = groupPct * ag.mag; // net swing % for this DUN
+    // Beneficiary gains, others lose proportionally
+    sw[ag.dir] = (sw[ag.dir]||0) + swingAmt;
+    // Other two coalitions lose based on their current share
+    const others=['BN','PH','PN'].filter(k=>k!==ag.dir);
+    // Simplified: split loss equally
+    others.forEach(k=>{ sw[k] = (sw[k]||0) - swingAmt/2; });
+  });
+  return sw;
+}
+
+function simSeat(seat){
+  const isManual = !!dunSw[seat.code];
+  const manSw = dunSw[seat.code] || gSw;
+  const isuSw = computeIssueSw(seat.code);
+  const ageSw = computeAgeSw(seat);
+  const combined={BN:0,PH:0,PN:0,OTH:0};
+  ['BN','PH','PN'].forEach(k=>{
+    combined[k]=(manSw[k]||0)+(isuSw[k]||0)+(ageSw[k]||0);
+  });
+  const tot=seat.candidates.reduce((s,c)=>s+c.v,0);
+  const adj=seat.candidates.map(c=>({...c,av:Math.max(0,c.v+Math.round(tot*(combined[c.c]||0)/100))}));
+  adj.sort((a,b)=>b.av-a.av);
+  const ta=adj.reduce((s,c)=>s+c.av,0);
+  const mg=adj[0].av-adj[1].av;
+  const mgp=ta?mg/ta*100:0;
+  const st=mgp>=15?'SELAMAT':mgp>=8?'CENDERUNG':mgp>=4?'CONDONG':'TOSS-UP';
+  return{...seat,adj,winner:adj[0],margin:mg,marginPct:mgp,status:st,total:tot,totalAdj:ta,isuSw,ageSw,combined,isManual};
+}
+
+function simAll(){ return DUN.map(simSeat); }
+function countSeats(sims){const r={BN:0,PH:0,PN:0,OTH:0};sims.forEach(s=>r[s.winner.c]++);return r;}
+
+const BASE_SIMS = DUN.map(s=>{
+  const tot=s.candidates.reduce((x,c)=>x+c.v,0);
+  const adj=[...s.candidates].map(c=>({...c,av:c.v})).sort((a,b)=>b.av-a.av);
+  return{...s,adj,winner:adj[0],total:tot,totalAdj:tot};
+});
+
+// ── HEADER UPDATE ────────────────────────────────────────────────────────────
+function updateHeader(sims){
+  const cnt=countSeats(sims);
+  const leader=Object.entries(cnt).filter(([k])=>k!=='OTH').sort((a,b)=>b[1]-a[1])[0];
+  const hasMaj=cnt[leader[0]]>=MAJ;
+  ['BN','PH','PN'].forEach(k=>{
+    const d=cnt[k]-BASE[k];
+    document.getElementById('snum-'+k).textContent=cnt[k];
+    const el=document.getElementById('sdiff-'+k);
+    el.textContent=(d>0?'+':'')+d+' dari GE15'; el.style.color=clrV(d);
+  });
+  const mi=document.getElementById('smaj-icon');
+  const mt=document.getElementById('smaj-text');
+  const sm=document.getElementById('smaj');
+  mi.textContent=hasMaj?'✓':'✗';
+  mt.textContent=hasMaj?leader[0]+' MAJORITI':'TIADA MAJORITI';
+  mi.style.color=mt.style.color=hasMaj?'#15803d':'#b91c1c';
+  sm.style.background=hasMaj?'#f0fdf4':'#fff1f2';
+  sm.style.borderColor=hasMaj?'#bbf7d0':'#fecdd3';
+  // Bar
+  const bar=document.getElementById('main-bar');
+  bar.innerHTML='';
+  ['BN','PH','PN','OTH'].forEach(k=>{
+    if(!cnt[k]) return;
+    const seg=document.createElement('div');
+    seg.className='seat-seg'; seg.style.flex=cnt[k]; seg.style.background=COL[k]||'#888';
+    if(cnt[k]>=2) seg.innerHTML=`<span>${cnt[k]}</span>`;
+    bar.appendChild(seg);
+  });
+  const mp=(MAJ/TOTAL*100).toFixed(2)+'%';
+  document.getElementById('maj-line').style.left=mp;
+  document.getElementById('maj-lbl').style.left=mp;
+  // Flipped
+  const flipped=sims.filter((s,i)=>s.winner.c!==BASE_SIMS[i].winner.c);
+  const cb=document.getElementById('changes-box');
+  const cl=document.getElementById('changes-list');
+  if(flipped.length){
+    cb.classList.add('show');
+    cl.innerHTML=flipped.map(s=>{
+      const orig=BASE_SIMS.find(b=>b.code===s.code);
+      return `<div class="ch-row"><div><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--faint);">${s.code} </span><span style="font-size:14px;font-weight:600;">${s.name}</span></div>
+      <div class="ch-arrow">
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:${COL[orig.winner.c]};">${orig.winner.c}</span>
+        <span style="color:var(--faint);">→</span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:${COL[s.winner.c]};">${s.winner.c}</span>
+      </div></div>`;
+    }).join('');
+  } else { cb.classList.remove('show'); }
+}
+
+// ── ISU PREVIEW ──────────────────────────────────────────────────────────────
+function renderIsuPreview(){
+  const all=Object.entries(ISSUES).flatMap(([code,iss])=>iss.map(i=>({...i,code,name:DUN.find(d=>d.code===code)?.name})));
+  const byImpact=all.filter(i=>i.impact>=2).sort((a,b)=>b.impact-a.impact).slice(0,8);
+  document.getElementById('isu-preview').innerHTML=byImpact.map(i=>{
+    const sv=(i.impact*0.8*(i.sentiment==='pos'?1:-1)).toFixed(1);
+    const sc=i.sentiment==='pos'?'#15803d':'#b91c1c';
+    return `<div class="isu-prev-item" style="border-color:${sc}22;background:${i.sentiment==='pos'?'#f0fdf4':'#fff1f2'};">
+      <div><span class="isu-code">${i.code}</span>${i.name} — ${i.label}</div>
+      <span class="isu-impact" style="color:${sc};">${sv>0?'+':''}${sv}% ${i.affects}</span>
+    </div>`;
+  }).join('')+'<div style="font-size:12px;color:var(--faint);text-align:center;padding:6px;">...dan lagi '+all.length+' isu direkod</div>';
+}
+
+// ── AGE STATS ────────────────────────────────────────────────────────────────
+function updateAgeStats(){
+  const totYouth=DUN.reduce((s,d)=>s+d.youth,0);
+  const totMid=DUN.reduce((s,d)=>s+d.mid,0);
+  const totSenior=DUN.reduce((s,d)=>s+d.senior,0);
+  document.getElementById('age-stats-youth').textContent=fmt(totYouth)+' pengundi merentas 28 DUN';
+  document.getElementById('age-stats-mid').textContent=fmt(totMid)+' pengundi merentas 28 DUN';
+  document.getElementById('age-stats-senior').textContent=fmt(totSenior)+' pengundi merentas 28 DUN';
+}
+
+function updateAgeEffects(){
+  ['youth','mid','senior'].forEach(g=>{
+    const ag=ageSwing[g]; const dc=COL[ag.dir]||'#888';
+    if(!ag.mag){
+      document.getElementById('age-eff-'+g).textContent='Tiada swing — laraskan slider untuk lihat kesan';
+      return;
+    }
+    const grpVoters=g==='youth'?DUN.reduce((s,d)=>s+d.youth,0):g==='mid'?DUN.reduce((s,d)=>s+d.mid,0):DUN.reduce((s,d)=>s+d.senior,0);
+    const totalVoters=DUN.reduce((s,d)=>s+d.voters,0);
+    const avgPct=(grpVoters/totalVoters*100).toFixed(0);
+    const netEffect=(grpVoters/totalVoters*ag.mag).toFixed(1);
+    document.getElementById('age-eff-'+g).innerHTML=
+      `${g==='youth'?'Belia':g==='mid'?'Kumpulan pertengahan':'Warga emas'} (~${avgPct}% per DUN purata) → `+
+      `<span style="color:${dc};font-weight:700;">${ag.dir} +${netEffect}% agregat</span>. `+
+      `Kawasan lebih ${g==='youth'?'muda':'tua'} terkesan lebih besar.`;
+  });
+}
+
+// ── DUN CARD ─────────────────────────────────────────────────────────────────
+function renderCard(sim){
+  const orig=BASE_SIMS.find(b=>b.code===sim.code);
+  const isFlipped=sim.winner.c!==orig.winner.c;
+  const isExp=!!expanded[sim.code];
+  const tot=sim.total, ta=sim.totalAdj;
+  const wc=COL[sim.winner.c]||'#888';
+  const sc=stCol(sim.status);
+  const issues=ISSUES[sim.code]||[];
+
+  // mini vote bar
+  const miniSegs=sim.adj.map((c,i)=>`<div class="mini-seg" style="flex:${c.av};background:${COL[c.c]||'#888'};opacity:${i===0?1:0.3};"></div>`).join('');
+  // mini age strip
+  const ageStrip=sim.age_pcts.map((p,i)=>`<div class="age-seg" style="flex:${p};background:${AGE_COL[i]};"></div>`).join('');
+  // shares
+  const shares=sim.adj.slice(0,3).map((c,i)=>`<span class="dh-share" style="color:${i===0?COL[c.c]:'var(--faint)'};">${c.c} ${pct(c.av,ta)}%</span>`).join('');
+  // age pills
+  const agePills=`
+    <span class="age-pill" style="background:var(--youth-l);color:var(--youth);">🎓 ${sim.youth_pct}%</span>
+    <span class="age-pill" style="background:var(--mid-l);color:var(--mid);">⚖️ ${sim.mid_pct}%</span>
+    <span class="age-pill" style="background:var(--senior-l);color:var(--senior);">🏠 ${sim.senior_pct}%</span>`;
+
+  let expandedHtml='';
+  if(isExp){
+    // Col 1: votes
+    const candHtml=sim.adj.map((c,i)=>{
+      const iw=i===0; const cc=COL[c.c]||'#888';
+      return `<div class="cand">
+        <div class="cand-top"><div><span class="cand-name ${iw?'w':'l'}">${c.name||c.c}</span> <span class="cand-tag" style="color:${cc};">${c.c}</span></div>
+        <div class="cand-pcts"><span class="p-old">${pct(c.v,tot)}%</span><span class="p-new" style="color:${iw?cc:'var(--faint)'};">${pct(c.av,ta)}%</span></div></div>
+        <div class="cbar"><div class="cbar-f" style="width:${pct(c.av,ta)}%;background:${cc};opacity:${iw?1:0.3};"></div></div>
+      </div>`;
+    }).join('');
+    // swing totals breakdown
+    const swTot=sim.combined;
+    const swHtml=['BN','PH','PN'].map(k=>`<div class="st-row"><span style="color:${COL[k]};font-weight:700;">${k}</span><span style="color:${clrV(swTot[k]||0)};">${(swTot[k]||0)>0?'+':''}${(swTot[k]||0).toFixed(1)}%</span></div>`).join('');
+
+    // Col 2: age breakdown
+    const maxAge=Math.max(...sim.age_counts);
+    const abRows=GROUPS.map((g,i)=>{
+      const barW=(sim.age_counts[i]/maxAge*100).toFixed(1);
+      return `<div class="ab-row">
+        <div class="ab-grp" style="color:${AGE_COL[i]};">${g} thn</div>
+        <div class="ab-bar"><div class="ab-fill" style="width:${barW}%;background:${AGE_COL[i]};"><span>${sim.age_pcts[i]>=8?sim.age_pcts[i]+'%':''}</span></div></div>
+        <div class="ab-num">${fmt(sim.age_counts[i])}</div>
+      </div>`;
+    }).join('');
+    // Age effect from age swing
+    let ageEffHtml='';
+    const hasAgeSwing=ageSwing.youth.mag||ageSwing.mid.mag||ageSwing.senior.mag;
+    if(hasAgeSwing){
+      const agsw=sim.ageSw;
+      const parts=['BN','PH','PN'].filter(k=>Math.abs(agsw[k]||0)>0.05).map(k=>`<span style="color:${COL[k]};font-weight:700;">${k} ${(agsw[k]||0)>0?'+':''}${(agsw[k]||0).toFixed(1)}%</span>`).join(' · ');
+      if(parts) ageEffHtml=`<div class="age-effect-note">Kesan swing umur: ${parts}</div>`;
+    }
+
+    // Col 3: swing sliders
+    const sw=dunSw[sim.code]||{BN:0,PH:0,PN:0};
+    const sliders=['BN','PH','PN'].map(k=>{
+      const v=sw[k]||0;
+      return `<div class="dun-slider-row">
+        <span class="dsl-key" style="color:${COL[k]};">${k}</span>
+        <input type="range" min="-25" max="25" step="0.5" value="${v}"
+          oninput="onDunSlide('${sim.code}','${k}',this.value)"
+          style="accent-color:${COL[k]};"/>
+        <span class="dsl-val" id="dsv-${sim.code}-${k}" style="color:${clrV(v)};">${v>0?'+':''}${v}%</span>
+      </div>`;
+    }).join('');
+    const isuHtml=issues.map(isu=>{
+      const sc2=isu.sentiment==='pos'?'pos':'neg';
+      const sv=(isu.impact*0.8*(isu.sentiment==='pos'?1:-1)).toFixed(1);
+      const sign=sv>0?'+':'';
+      const afc=COL[isu.affects]||'#888';
+      return `<div class="isu-item ${sc2}">
+        <div class="isu-text">${isu.label}</div>
+        <div class="isu-tags">
+          <span class="itag itag-cat">${isu.cat}</span>
+          <span class="itag ${sc2==='pos'?'itag-pos':'itag-neg'}">${isu.sentiment==='pos'?'↑ Pos':'↓ Neg'}</span>
+          <span class="itag-c itag" style="color:${afc};background:${COL_L[isu.affects]||'#f5f5f5'};border:1px solid ${COL_B[isu.affects]||'#ddd'};">→ ${isu.affects}</span>
+          <span class="isu-sw" style="color:${sv>0?'#15803d':'#b91c1c'};">${sign}${sv}%</span>
+        </div>
+      </div>`;
+    }).join('')||'<div style="font-size:12px;color:var(--faint);font-style:italic;">Tiada isu direkodkan</div>';
+
+    expandedHtml=`<div class="dun-body open" id="body-${sim.code}">
+      <div class="body-col">
+        <div class="col-lbl">PECAHAN UNDI GE15→SIMULASI</div>
+        ${candHtml}
+        <div class="swing-totals"><div class="st-title">SWING GABUNGAN</div>${swHtml}</div>
+      </div>
+      <div class="body-col age-col">
+        <div class="col-lbl">PROFIL UMUR PENGUNDI*</div>
+        ${abRows}
+        <div class="age-segs-card">
+          <div class="asc" style="background:var(--youth-l);border-color:var(--youth-b);">
+            <div class="asc-lbl" style="color:var(--PH);">Belia</div>
+            <div class="asc-num" style="color:var(--PH);">${fmt(sim.youth)}</div>
+            <div class="asc-pct" style="color:var(--PH);">${sim.youth_pct}%</div>
+          </div>
+          <div class="asc" style="background:var(--mid-l);border-color:var(--mid-b);">
+            <div class="asc-lbl" style="color:var(--mid);">40-59</div>
+            <div class="asc-num" style="color:var(--mid);">${fmt(sim.mid)}</div>
+            <div class="asc-pct" style="color:var(--mid);">${sim.mid_pct}%</div>
+          </div>
+          <div class="asc" style="background:var(--senior-l);border-color:var(--senior-b);">
+            <div class="asc-lbl" style="color:var(--senior);">60+</div>
+            <div class="asc-num" style="color:var(--senior);">${fmt(sim.senior)}</div>
+            <div class="asc-pct" style="color:var(--senior);">${sim.senior_pct}%</div>
+          </div>
+        </div>
+        ${ageEffHtml}
+        <div style="font-size:10px;color:var(--faint);margin-top:8px;font-style:italic;">*Anggaran berdasarkan profil DOSM Melaka</div>
+      </div>
+      <div class="body-col">
+        <div class="col-lbl" style="display:flex;justify-content:space-between;">
+          <span>SWING MANUAL DUN INI</span>
+          ${dunSw[sim.code]?`<button class="btn-clear" onclick="clearDunSw('${sim.code}',event)">× padam</button>`:''}
+        </div>
+        <div class="swing-note">Swing manual <b>menggantikan</b> swing global untuk kerusi ini sahaja</div>
+        ${sliders}
+        <div class="col-lbl" style="margin-top:14px;">ISU LOKALITI / PDM</div>
+        ${isuHtml}
+      </div>
+    </div>`;
+  } else {
+    expandedHtml=`<div class="dun-body" id="body-${sim.code}"></div>`;
+  }
+
+  return `<div class="dun-card${isFlipped?' flipped':''}" id="card-${sim.code}">
+    <div class="dun-hdr" onclick="toggleExp('${sim.code}')">
+      <div class="dh-left">
+        <div class="dh-code">${sim.code} · ${sim.region}</div>
+        <div class="dh-name">${sim.name}</div>
+        <div class="dh-badges">
+          ${isFlipped?'<span class="badge badge-flip">⚡ BERTUKAR</span>':''}
+          ${sim.isManual?'<span class="badge badge-manual">✎ MANUAL</span>':''}
+          <span class="badge badge-status" style="color:${sc};background:${stBg(sim.status)};border-color:${stBd(sim.status)};">${sim.status}</span>
+        </div>
+        <div class="mini-bar">${miniSegs}</div>
+        <div class="age-strip">${ageStrip}</div>
+        <div class="dh-shares">${shares}</div>
+        <div class="age-pills">${agePills}</div>
+      </div>
+      <div class="dh-right">
+        <span class="dh-winner" style="background:${wc};">${sim.winner.c}</span>
+        ${isFlipped?`<span class="dh-prev">GE15: ${orig.winner.c}</span>`:''}
+        <div class="dh-margin">±${sim.marginPct.toFixed(1)}% · ${fmt(sim.margin)} undi</div>
+        <div style="font-size:11px;color:var(--faint);margin-top:4px;">${isExp?'▲ tutup':'▼ buka'}</div>
+      </div>
+    </div>
+    ${expandedHtml}
+    <div class="dun-stats">
+      <div class="ds"><div class="ds-lbl">PEMENANG</div><div class="ds-val" style="color:${wc};">${sim.winner.c}</div></div>
+      <div class="ds"><div class="ds-lbl">MAJORITI</div><div class="ds-val">${fmt(sim.margin)} (${sim.marginPct.toFixed(1)}%)</div></div>
+      <div class="ds"><div class="ds-lbl">BELIA 18-39</div><div class="ds-val" style="color:#1d4ed8;">${sim.youth_pct}%</div></div>
+      <div class="ds"><div class="ds-lbl">WARGA EMAS 60+</div><div class="ds-val" style="color:#b91c1c;">${sim.senior_pct}%</div></div>
+    </div>
+  </div>`;
+}
+
+const REGIONS=['Alor Gajah','KM Tengah','Bandaraya','Jasin'];
+function renderDunList(sims){
+  let html='';
+  REGIONS.forEach(reg=>{
+    const rs=sims.filter(s=>s.region===reg);
+    const rc={BN:0,PH:0,PN:0,OTH:0};
+    rs.forEach(s=>rc[s.winner.c]++);
+    html+=`<div class="region-hdr">
+      <div class="rh-stripe" style="background:${REGION_COL[reg]||'#888'};"></div>
+      <div><div class="rh-name">${reg.toUpperCase()}</div><div class="rh-count">${rs.length} kerusi</div></div>
+      <div class="rh-seats">${['BN','PH','PN'].filter(k=>rc[k]>0).map(k=>`<span class="rhs-item" style="color:${COL[k]};">${k}: ${rc[k]}</span>`).join('')}</div>
+    </div>`;
+    rs.forEach(s=>{ html+=renderCard(s); });
+  });
+  document.getElementById('dun-container').innerHTML=html;
+}
+
+function renderAll(){
+  const sims=simAll();
+  lastSims=sims;
+  updateHeader(sims);
+  updateAgeEffects();
+  renderDunList(sims);
+  // re-apply search/filter state after render
+  setTimeout(applyFilter, 0);
+}
+
+// ── INTERACTIONS ─────────────────────────────────────────────────────────────
+function toggleExp(code){
+  expanded[code]=!expanded[code];
+  renderAll();
+  if(expanded[code]){
+    setTimeout(()=>{ const c=document.getElementById('card-'+code); if(c) c.scrollIntoView({behavior:'smooth',block:'nearest'}); },50);
+  }
+}
+
+function onDunSlide(code,k,v){
+  v=parseFloat(v);
+  if(!dunSw[code]) dunSw[code]={BN:0,PH:0,PN:0};
+  dunSw[code][k]=v;
+  const el=document.getElementById(`dsv-${code}-${k}`);
+  if(el){ el.textContent=(v>0?'+':'')+v+'%'; el.style.color=clrV(v); }
+  const sims=simAll(); updateHeader(sims);
+  const sim=sims.find(s=>s.code===code);
+  const card=document.getElementById('card-'+code);
+  if(card && sim){ card.outerHTML=renderCard(sim); }
+}
+
+function clearDunSw(code,evt){
+  if(evt) evt.stopPropagation();
+  delete dunSw[code];
+  renderAll();
+}
+
+function updateGlobal(k,v){
+  gSw[k]=parseFloat(v);
+  const el=document.getElementById('gv-'+k); if(el){ el.textContent=(v>0?'+':'')+parseFloat(v)+'%'; el.style.color=clrV(parseFloat(v)); }
+  renderAll();
+}
+
+function applyPreset(bn,ph,pn){
+  gSw={BN:bn,PH:ph,PN:pn};
+  ['BN','PH','PN'].forEach(k=>{
+    const slider=document.getElementById('gs-'+k); if(slider) slider.value=gSw[k];
+    const el=document.getElementById('gv-'+k); if(el){ el.textContent=(gSw[k]>0?'+':'')+gSw[k]+'%'; el.style.color=clrV(gSw[k]); }
+  });
+  renderAll();
+}
+
+function setAgeDir(group,dir){
+  ageSwing[group].dir=dir;
+  const pfx=group==='youth'?'y':group==='mid'?'m':'s';
+  ['BN','PH','PN'].forEach(k=>{
+    const btn=document.getElementById(`${pfx}d-${k}`);
+    if(btn){ btn.className='dir-btn'+(k===dir?` active-${k}`:''); }
+  });
+  document.getElementById(group+'-dir-lbl').textContent=dir;
+  document.getElementById(group+'-dir-lbl').style.color=COL[dir];
+  updateAgeEffects(); renderAll();
+}
+
+function updateAgeSwing(group,v){
+  ageSwing[group].mag=parseFloat(v);
+  const el=document.getElementById('age-val-'+group);
+  const dc=COL[ageSwing[group].dir];
+  if(el){ el.textContent=v+'%'; el.style.color=parseFloat(v)>0?dc:'var(--faint)'; }
+  updateAgeEffects(); renderAll();
+}
+
+function switchCtrl(tab,btn){
+  document.querySelectorAll('.ctrl-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.ctrl-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+}
+
+function resetAll(){
+  gSw={BN:0,PH:0,PN:0};
+  dunSw={}; expanded={};
+  ageSwing={youth:{dir:'PH',mag:0},mid:{dir:'BN',mag:0},senior:{dir:'BN',mag:0}};
+  ['BN','PH','PN'].forEach(k=>{
+    const s=document.getElementById('gs-'+k); if(s) s.value=0;
+    const e=document.getElementById('gv-'+k); if(e){ e.textContent='0%'; e.style.color=COL[k]; }
+  });
+  ['youth','mid','senior'].forEach(g=>{
+    const s=document.getElementById('age-sl-'+g); if(s) s.value=0;
+    const e=document.getElementById('age-val-'+g); if(e){ e.textContent='0%'; }
+  });
+  setAgeDir('youth','PH'); setAgeDir('mid','BN'); setAgeDir('senior','BN');
+  renderAll();
+}
+
+// ── SEARCH & FILTER ─────────────────────────────────────────────────────────
+let sfFilter = 'ALL';
+let lastSims = [];
+
+function setFilter(f, btn){
+  sfFilter = f;
+  document.querySelectorAll('.sf-pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilter();
+}
+
+function applyFilter(){
+  const q = (document.getElementById('sf-search')?.value||'').toLowerCase().trim();
+  const sort = document.getElementById('sf-sort')?.value||'DEFAULT';
+  const sims = lastSims.length ? lastSims : simAll();
+
+  // Build filtered + sorted list
+  let filtered = sims.filter(sim=>{
+    const orig = BASE_SIMS.find(b=>b.code===sim.code);
+    const isFlipped = sim.winner.c !== orig.winner.c;
+    // filter by coalition / status
+    if(sfFilter==='BERTUKAR' && !isFlipped) return false;
+    if(sfFilter==='TOSS-UP' && sim.status!=='TOSS-UP') return false;
+    if(sfFilter==='BN' && sim.winner.c!=='BN') return false;
+    if(sfFilter==='PH' && sim.winner.c!=='PH') return false;
+    if(sfFilter==='PN' && sim.winner.c!=='PN') return false;
+    // text search
+    if(q){
+      const searchable = (sim.name+sim.code+sim.region+sim.candidates.map(c=>c.name+c.c).join(' ')).toLowerCase();
+      if(!searchable.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // sort
+  if(sort==='MARGIN_ASC') filtered.sort((a,b)=>a.marginPct-b.marginPct);
+  else if(sort==='MARGIN_DESC') filtered.sort((a,b)=>b.marginPct-a.marginPct);
+  else if(sort==='VOTERS_DESC') filtered.sort((a,b)=>b.voters-a.voters);
+  else if(sort==='VOTERS_ASC') filtered.sort((a,b)=>a.voters-b.voters);
+  else if(sort==='YOUTH_DESC') filtered.sort((a,b)=>b.youth_pct-a.youth_pct);
+
+  // Show/hide cards
+  const visibleCodes = new Set(filtered.map(s=>s.code));
+  sims.forEach(sim=>{
+    const card = document.getElementById('card-'+sim.code);
+    if(card){
+      if(visibleCodes.has(sim.code)) card.classList.remove('sf-hidden');
+      else card.classList.add('sf-hidden');
+    }
+  });
+
+  // Reorder if sorted
+  if(sort!=='DEFAULT' && filtered.length){
+    const container = document.getElementById('dun-container');
+    // hide region headers when filtering/sorting non-default
+    container.querySelectorAll('.region-hdr').forEach(h=>{
+      h.style.display = (q||sfFilter!=='ALL'||sort!=='DEFAULT') ? 'none' : '';
+    });
+    if(sort!=='DEFAULT'){
+      filtered.forEach(sim=>{
+        const card = document.getElementById('card-'+sim.code);
+        if(card) container.appendChild(card);
+      });
+    }
+  } else {
+    const container = document.getElementById('dun-container');
+    container.querySelectorAll('.region-hdr').forEach(h=>h.style.display='');
+  }
+
+  document.getElementById('sf-count').textContent = filtered.length+' / 28 DUN';
+}
+
+// ── AI SCENARIO ANALYST ─────────────────────────────────────────────────────
+let lastAnalysisContext = '';
+
+function buildAnalysisContext(){
+  const sims = simAll();
+  lastSims = sims;
+  const cnt = countSeats(sims);
+  const flipped = sims.filter((s,i)=>s.winner.c!==BASE_SIMS[i].winner.c);
+  const tossups = sims.filter(s=>s.status==='TOSS-UP');
+  const condong = sims.filter(s=>s.status==='CONDONG');
+
+  const ctx = {
+    keputusan: {BN:cnt.BN, PH:cnt.PH, PN:cnt.PN},
+    ge15: {BN:21, PH:5, PN:2},
+    majoriti: 15,
+    adaMajoriti: Object.entries(cnt).filter(([k])=>k!=='OTH').some(([k,v])=>v>=15),
+    pemimpin: Object.entries(cnt).filter(([k])=>k!=='OTH').sort((a,b)=>b[1]-a[1])[0][0],
+    swingGlobal: gSw,
+    swingUmur: ageSwing,
+    isuAktif: !!document.getElementById('isu-toggle')?.checked,
+    bertukar: flipped.map(s=>{const orig=BASE_SIMS.find(b=>b.code===s.code);return{dun:s.name,dari:orig.winner.c,kepada:s.winner.c,margin:s.marginPct.toFixed(1)+'%'};}),
+    tossups: tossups.map(s=>({dun:s.name,pemenang:s.winner.c,margin:s.marginPct.toFixed(1)+'%'})),
+    condong: condong.map(s=>({dun:s.name,pemenang:s.winner.c})),
+    dunManual: Object.keys(dunSw)
+  };
+  return ctx;
+}
+
+async function runAnalysis(customQ){
+  const ctx = buildAnalysisContext();
+  lastAnalysisContext = JSON.stringify(ctx);
+
+  const btn = document.getElementById('ai-run-btn');
+  const output = document.getElementById('ai-output');
+  btn.disabled = true;
+  btn.textContent = '⏳ Menganalisis...';
+
+  output.innerHTML = `<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Claude sedang menganalisis senario PRN Melaka...</span></div>`;
+
+  const question = customQ || 'Berikan analisis strategik menyeluruh tentang senario PRN Melaka 2026 ini dalam Bahasa Malaysia. Bincangkan: (1) kedudukan koalisi dan sama ada ada majoriti, (2) kerusi bertukar tangan yang kritikal, (3) kawasan toss-up yang perlu diberi perhatian, (4) implikasi swing umur jika ada, dan (5) naratif keseluruhan siapa yang menang atau rugi dalam senario ini. Guna bullet points untuk kejelasan. Jawab dalam 3-4 perenggan padat.';
+
+  const systemPrompt = `Kamu adalah penganalisis politik strategik pakar PRN Melaka 2026. Kamu diberi data simulasi daripada dashboard interaktif. Berikan analisis dalam Bahasa Malaysia yang ringkas, tajam, dan profesional. Guna markdown ringan (bold untuk nama koalisi, bullet points). Jangan gunakan frasa klise. Fokus pada implikasi strategik.
+
+Data simulasi semasa:
+${lastAnalysisContext}
+
+Konteks: Ini adalah simulator swing pilihan raya, bukan keputusan sebenar. Analisis berdasarkan senario yang ditetapkan pengguna.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: systemPrompt,
+        messages:[{role:'user',content:question}]
+      })
+    });
+
+    if(!resp.ok){
+      const err = await resp.json();
+      throw new Error(err.error?.message||'API error '+resp.status);
+    }
+
+    const data = await resp.json();
+    const text = data.content?.find(b=>b.type==='text')?.text||'';
+
+    // Render with basic markdown
+    const rendered = text
+      .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+      .replace(/^### (.+)$/gm,'<strong style="font-size:14px;">$1</strong>')
+      .replace(/^## (.+)$/gm,'<strong style="font-size:15px;">$1</strong>')
+      .replace(/^- (.+)$/gm,'<span style="display:block;padding-left:14px;position:relative;margin-bottom:4px;"><span style="position:absolute;left:0;color:var(--purple);">•</span>$1</span>')
+      .replace(/\n\n/g,'<br/><br/>')
+      .replace(/BN/g,'<span class="ai-tag tag-bn">BN</span>')
+      .replace(/PH(?!ilippin)/g,'<span class="ai-tag tag-ph">PH</span>')
+      .replace(/PN(?! Melaka)/g,'<span class="ai-tag tag-pn">PN</span>');
+
+    output.innerHTML = `<div class="ai-text">${rendered}</div>`;
+
+    // Show follow-up questions
+    document.getElementById('ai-qrow').style.display='flex';
+
+    // Show context chips
+    const ctxEl = document.getElementById('ai-ctx');
+    ctxEl.style.display='flex';
+    const cnt2=JSON.parse(lastAnalysisContext);
+    ctxEl.innerHTML=`
+      <span class="ai-ctx-item">BN ${cnt2.keputusan.BN} kerusi</span>
+      <span class="ai-ctx-item">PH ${cnt2.keputusan.PH} kerusi</span>
+      <span class="ai-ctx-item">PN ${cnt2.keputusan.PN} kerusi</span>
+      <span class="ai-ctx-item">${cnt2.bertukar.length} bertukar</span>
+      <span class="ai-ctx-item">${cnt2.tossups.length} toss-up</span>
+      ${cnt2.isuAktif?'<span class="ai-ctx-item">Isu aktif</span>':''}
+    `;
+  } catch(e){
+    output.innerHTML=`<div style="color:#b91c1c;font-size:13px;">⚠ Ralat: ${e.message}</div>`;
+  }
+
+  btn.disabled=false;
+  btn.textContent='▶ Analisis Semula';
+}
+
+function runCustomQ(q){
+  runAnalysis(q);
+  document.getElementById('ai-analyst').scrollIntoView({behavior:'smooth'});
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+updateAgeStats();
+renderIsuPreview();
+renderAll();
+</script>
+</body>
+</html>

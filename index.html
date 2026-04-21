@@ -284,6 +284,8 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint)
 .ai-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid var(--purple);color:var(--purple);background:rgba(124,58,237,.08);cursor:pointer;transition:all .2s;white-space:nowrap;}
 .ai-btn:hover:not(:disabled){background:var(--purple);color:#fff;}
 .ai-btn:disabled{opacity:.45;cursor:not-allowed;}
+.ai-key-btn{font-size:14px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;opacity:.5;transition:opacity .2s;}
+.ai-key-btn:hover{opacity:1;}
 .ai-output{padding:16px 18px;min-height:60px;}
 .ai-loading{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:13px;}
 .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);animation:pulse 1.2s ease-in-out infinite;}
@@ -531,6 +533,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint)
         <div class="ai-title">Analisis Senario</div>
         <div class="ai-sub">Analisis naratif automatik berdasarkan tetapan simulasi semasa anda</div>
       </div>
+      <button class="ai-key-btn" id="ai-key-btn" onclick="setGroqKey()" title="Set Groq API Key">🔑</button>
       <button class="ai-btn" id="ai-run-btn" onclick="runAnalysis()">▶ Analisis Sekarang</button>
     </div>
     <div class="ai-output" id="ai-output">
@@ -1144,6 +1147,21 @@ function buildAnalysisContext(){
   return ctx;
 }
 
+function setGroqKey(){
+  const current = localStorage.getItem('groq_api_key')||'';
+  const key = prompt('Masukkan Groq API Key anda (dari console.groq.com):', current);
+  if(key===null) return;
+  if(key.trim()){
+    localStorage.setItem('groq_api_key', key.trim());
+    document.getElementById('ai-key-btn').title='Groq API Key: aktif ✓';
+    document.getElementById('ai-key-btn').style.opacity='1';
+  } else {
+    localStorage.removeItem('groq_api_key');
+    document.getElementById('ai-key-btn').title='Set Groq API Key';
+    document.getElementById('ai-key-btn').style.opacity='.5';
+  }
+}
+
 async function runAnalysis(customQ){
   const ctx = buildAnalysisContext();
   lastAnalysisContext = JSON.stringify(ctx);
@@ -1153,7 +1171,15 @@ async function runAnalysis(customQ){
   btn.disabled = true;
   btn.textContent = '⏳ Menganalisis...';
 
-  output.innerHTML = `<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>Claude sedang menganalisis senario PRN Melaka...</span></div>`;
+  const groqKey = localStorage.getItem('groq_api_key');
+  if(!groqKey){
+    output.innerHTML=`<div style="color:#b91c1c;font-size:13px;">⚠ Groq API key belum ditetapkan. Klik 🔑 di atas untuk masukkan key anda.</div>`;
+    btn.disabled=false;
+    btn.textContent='▶ Analisis Sekarang';
+    return;
+  }
+
+  output.innerHTML = `<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>AI sedang menganalisis senario PRN Melaka...</span></div>`;
 
   const question = customQ || 'Berikan analisis strategik menyeluruh tentang senario PRN Melaka 2026 ini dalam Bahasa Malaysia. Bincangkan: (1) kedudukan koalisi dan sama ada ada majoriti, (2) kerusi bertukar tangan yang kritikal, (3) kawasan toss-up yang perlu diberi perhatian, (4) implikasi swing umur jika ada, dan (5) naratif keseluruhan siapa yang menang atau rugi dalam senario ini. Guna bullet points untuk kejelasan. Jawab dalam 3-4 perenggan padat.';
 
@@ -1165,14 +1191,19 @@ ${lastAnalysisContext}
 Konteks: Ini adalah simulator swing pilihan raya, bukan keputusan sebenar. Analisis berdasarkan senario yang ditetapkan pengguna.`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'Authorization':'Bearer '+groqKey
+      },
       body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'llama-3.3-70b-versatile',
         max_tokens:1000,
-        system: systemPrompt,
-        messages:[{role:'user',content:question}]
+        messages:[
+          {role:'system',content:systemPrompt},
+          {role:'user',content:question}
+        ]
       })
     });
 
@@ -1182,7 +1213,7 @@ Konteks: Ini adalah simulator swing pilihan raya, bukan keputusan sebenar. Anali
     }
 
     const data = await resp.json();
-    const text = data.content?.find(b=>b.type==='text')?.text||'';
+    const text = data.choices?.[0]?.message?.content||'';
 
     // Render with basic markdown
     const rendered = text

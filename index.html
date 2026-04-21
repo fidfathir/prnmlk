@@ -283,10 +283,7 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint)
 .ai-sub{font-size:11px;color:var(--dim);margin-top:1px;}
 .ai-btn{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;padding:8px 16px;border-radius:8px;border:1.5px solid var(--purple);color:var(--purple);background:rgba(124,58,237,.08);cursor:pointer;transition:all .2s;white-space:nowrap;}
 .ai-btn:hover:not(:disabled){background:var(--purple);color:#fff;}
-.ai-btn:disabled{opacity:.45;cursor:not-allowed;}
-.ai-key-btn{font-size:14px;padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:transparent;cursor:pointer;opacity:.5;transition:opacity .2s;}
-.ai-key-btn:hover{opacity:1;}
-.ai-output{padding:16px 18px;min-height:60px;}
+.ai-btn:disabled{opacity:.45;cursor:not-allowed;}.ai-output{padding:16px 18px;min-height:60px;}
 .ai-loading{display:flex;align-items:center;gap:10px;color:var(--dim);font-size:13px;}
 .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--purple);animation:pulse 1.2s ease-in-out infinite;}
 .ai-dot:nth-child(2){animation-delay:.2s;}
@@ -533,7 +530,6 @@ footer p{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--faint)
         <div class="ai-title">Analisis Senario</div>
         <div class="ai-sub">Analisis naratif automatik berdasarkan tetapan simulasi semasa anda</div>
       </div>
-      <button class="ai-key-btn" id="ai-key-btn" onclick="setGroqKey()" title="Set Groq API Key">🔑</button>
       <button class="ai-btn" id="ai-run-btn" onclick="runAnalysis()">▶ Analisis Sekarang</button>
     </div>
     <div class="ai-output" id="ai-output">
@@ -1147,20 +1143,7 @@ function buildAnalysisContext(){
   return ctx;
 }
 
-function setGroqKey(){
-  const current = localStorage.getItem('groq_api_key')||'';
-  const key = prompt('Masukkan Groq API Key anda (dari console.groq.com):', current);
-  if(key===null) return;
-  if(key.trim()){
-    localStorage.setItem('groq_api_key', key.trim());
-    document.getElementById('ai-key-btn').title='Groq API Key: aktif ✓';
-    document.getElementById('ai-key-btn').style.opacity='1';
-  } else {
-    localStorage.removeItem('groq_api_key');
-    document.getElementById('ai-key-btn').title='Set Groq API Key';
-    document.getElementById('ai-key-btn').style.opacity='.5';
-  }
-}
+const GROQ_API_KEY = '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';
 
 async function runAnalysis(customQ){
   const ctx = buildAnalysisContext();
@@ -1170,14 +1153,6 @@ async function runAnalysis(customQ){
   const output = document.getElementById('ai-output');
   btn.disabled = true;
   btn.textContent = '⏳ Menganalisis...';
-
-  const groqKey = localStorage.getItem('groq_api_key');
-  if(!groqKey){
-    output.innerHTML=`<div style="color:#b91c1c;font-size:13px;">⚠ Groq API key belum ditetapkan. Klik 🔑 di atas untuk masukkan key anda.</div>`;
-    btn.disabled=false;
-    btn.textContent='▶ Analisis Sekarang';
-    return;
-  }
 
   output.innerHTML = `<div class="ai-loading"><div class="ai-dot"></div><div class="ai-dot"></div><div class="ai-dot"></div><span>AI sedang menganalisis senario PRN Melaka...</span></div>`;
 
@@ -1195,7 +1170,7 @@ Konteks: Ini adalah simulator swing pilihan raya, bukan keputusan sebenar. Anali
       method:'POST',
       headers:{
         'Content-Type':'application/json',
-        'Authorization':'Bearer '+groqKey
+        'Authorization':'Bearer '+GROQ_API_KEY
       },
       body: JSON.stringify({
         model:'llama-3.3-70b-versatile',

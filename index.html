@@ -1219,7 +1219,7 @@ Konteks: Ini adalah simulator swing pilihan raya, bukan keputusan sebenar. Anali
       ${cnt2.isuAktif?'<span class="ai-ctx-item">Isu aktif</span>':''}
     `;
   } catch(e){
-    output.innerHTML=`<div style="color:#b91c1c;font-size:13px;">⚠ Ralat: ${e.message}</div>`;
+    output.innerHTML=`<div style="color:#b91c1c;font-size:13px;">⚠ Ralat: ${e.message} (${e.name})</div>`;
   }
 
   btn.disabled=false;
